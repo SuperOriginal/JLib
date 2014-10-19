@@ -1,0 +1,4 @@
+name: MattLib
+main: io.ibj.MattLib.MattLib
+version: 1.0-SNAPSHOT
+softdepend: [ DebugServer, Essentials ]
