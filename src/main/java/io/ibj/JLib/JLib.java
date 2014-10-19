@@ -3,6 +3,7 @@ package io.ibj.JLib;
 import io.ibj.JLib.cmd.CmdWrapper;
 import io.ibj.JLib.cmd.ICmd;
 import io.ibj.JLib.cmd.RootCmdWrapper;
+import io.ibj.JLib.db.DatabaseManager;
 import io.ibj.JLib.file.YAMLConfigurationFile;
 import io.ibj.JLib.gui.GuiListener;
 import io.ibj.JLib.logging.DefaultRavenFactory;
@@ -42,6 +43,12 @@ public class JLib extends JPlug {
 
     private YAMLConfigurationFile configFile;
 
+    private DatabaseManager dbManager;
+
+    public DatabaseManager getDatabaseManager(){
+        return dbManager;
+    }
+
     public void onModuleEnable(){
 
         i = this;
@@ -77,6 +84,10 @@ public class JLib extends JPlug {
 
         clearer = new PlayerMapClearer();
         registerEvents(clearer);
+    }
+
+    public void onModuleDisable(){
+        dbManager.cleanUpAll();
     }
 
     public void register(Command c){
