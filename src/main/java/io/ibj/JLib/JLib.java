@@ -4,7 +4,7 @@ import io.ibj.JLib.cmd.CmdWrapper;
 import io.ibj.JLib.cmd.ICmd;
 import io.ibj.JLib.cmd.RootCmdWrapper;
 import io.ibj.JLib.db.DatabaseManager;
-import io.ibj.JLib.file.YAMLConfigurationFile;
+import io.ibj.JLib.file.YAMLFile;
 import io.ibj.JLib.gui.GuiListener;
 import io.ibj.JLib.logging.DefaultRavenFactory;
 import io.ibj.JLib.logging.Raven;
@@ -41,7 +41,7 @@ public class JLib extends JPlug {
     @Getter
     private PlayerMapClearer clearer;
 
-    private YAMLConfigurationFile configFile;
+    private YAMLFile configFile;
 
     private DatabaseManager dbManager;
 
@@ -55,7 +55,7 @@ public class JLib extends JPlug {
 
         isDebug = Bukkit.getPluginManager().isPluginEnabled("DebugServer");
 
-        configFile = new YAMLConfigurationFile(this,"config.yml");
+        configFile = new YAMLFile(this,"config.yml");
 
         RavenFactory.registerFactory(new DefaultRavenFactory());
         String rawDsn = configFile.getConfig().getString("sentryRawDsn");
