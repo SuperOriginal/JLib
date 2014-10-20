@@ -10,6 +10,7 @@ import java.io.*;
 /**
  * Created by Joe on 6/30/2014.
  */
+@Deprecated
 public class ConfigFile {
 
     public ConfigFile(@NonNull File f, String modelResource, @NonNull JPlug plugin){

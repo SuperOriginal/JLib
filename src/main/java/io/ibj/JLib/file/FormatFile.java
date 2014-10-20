@@ -14,7 +14,8 @@ import java.util.Map;
 /**
  * Created by Joe on 6/30/2014.
  */
-public class FormatFile extends JsonFile {
+@Deprecated
+public class FormatFile extends GsonFile {
     public FormatFile(@NonNull File file, String modelResource, @NonNull JPlug plugin, @NonNull Gson gson) {
         super(file, modelResource, plugin, gson);
     }

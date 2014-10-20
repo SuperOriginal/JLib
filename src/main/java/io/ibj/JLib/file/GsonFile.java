@@ -12,8 +12,9 @@ import java.io.*;
 /**
  * Created by Joe on 6/30/2014.
  */
-public class JsonFile extends ConfigFile{
-    public JsonFile(File file, String modelResource, JPlug plugin, @NonNull Gson gson) {
+@Deprecated
+public class GsonFile extends ConfigFile{
+    public GsonFile(File file, String modelResource, JPlug plugin, @NonNull Gson gson) {
         super(file, modelResource, plugin);
         this.gson = gson;
     }

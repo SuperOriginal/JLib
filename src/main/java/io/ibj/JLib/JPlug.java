@@ -3,7 +3,7 @@ package io.ibj.JLib;
 import io.ibj.JLib.cmd.ICmd;
 import io.ibj.JLib.exceptions.PlayerException;
 import io.ibj.JLib.exceptions.PlayerInterruptedException;
-import io.ibj.JLib.file.YAMLConfigurationFile;
+import io.ibj.JLib.file.YAMLFile;
 import io.ibj.JLib.gui.PageHolder;
 import io.ibj.JLib.safe.SafeRunnablePlayerWrapper;
 import io.ibj.JLib.safe.SafeRunnableWrapper;
@@ -39,7 +39,7 @@ import java.util.concurrent.FutureTask;
  */
 public abstract class JPlug extends JavaPlugin {
 
-    YAMLConfigurationFile formatsFile;
+    YAMLFile formatsFile;
 
     /////////////////////////////////
     //Events                       //
@@ -315,7 +315,7 @@ public abstract class JPlug extends JavaPlugin {
                 return;
             }
             saveDefaultConfig();
-            this.formatsFile = new YAMLConfigurationFile(this, "formats.yml");
+            this.formatsFile = new YAMLFile(this, "formats.yml");
             this.formatsFile.saveDefaultConfig();
             onModuleEnable();
         } catch (Exception e) {
