@@ -47,7 +47,7 @@ public class JLib extends JPlug {
 
     private YAMLFile configFile;
 
-    private DatabaseManager dbManager;
+    private DatabaseManager dbManager = new DatabaseManager();
 
     public DatabaseManager getDatabaseManager(){
         return dbManager;
