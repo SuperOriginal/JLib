@@ -346,6 +346,11 @@ public abstract class JPlug extends JavaPlugin {
         }
         return unFormattedString; //Return
     }
+
+    public final String getFormatRaw(String key){
+        //noinspection NullArgumentToVariableArgMethod
+        return getFormatRaw(key,null);
+    }
     public final String getFormat(String key, boolean prefix, String... formatters) {
         String formatRaw = getFormatRaw(key, formatters);
         String prefixString = getFormatRaw("prefix");
