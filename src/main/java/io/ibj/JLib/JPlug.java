@@ -310,10 +310,6 @@ public abstract class JPlug extends JavaPlugin {
     @Override
     public final void onEnable() {
         try {
-            if (!JLib.getI().isEnabled()) {
-                onFailureToEnable();
-                return;
-            }
             saveDefaultConfig();
             this.formatsFile = new YAMLFile(this, "formats.yml");
             this.formatsFile.saveDefaultConfig();
