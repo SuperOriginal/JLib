@@ -1,5 +1,6 @@
 package io.ibj.JLib;
 
+import com.google.gson.Gson;
 import io.ibj.JLib.cmd.CmdWrapper;
 import io.ibj.JLib.cmd.ICmd;
 import io.ibj.JLib.cmd.RootCmdWrapper;
@@ -41,6 +42,9 @@ public class JLib extends JPlug {
     @Getter
     private PlayerMapClearer clearer;
 
+    @Getter
+    private PlayerLookup playerLookup = new PlayerLookup();
+
     private YAMLFile configFile;
 
     private DatabaseManager dbManager;
@@ -48,6 +52,9 @@ public class JLib extends JPlug {
     public DatabaseManager getDatabaseManager(){
         return dbManager;
     }
+
+    @Getter
+    private Gson gson = new Gson();
 
     public void onModuleEnable(){
 
@@ -83,6 +90,7 @@ public class JLib extends JPlug {
         }, ThreadLevel.SYNC);
 
         clearer = new PlayerMapClearer();
+
         registerEvents(clearer);
     }
 
