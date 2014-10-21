@@ -18,6 +18,8 @@ public class DatabaseConnectionDetails<T extends Object> {
         this.connectionType = connectionType;
         this.host = host;
         this.keyspace = keyspace;
+        this.type = type;
+        this.port = port;
     }
 
     DatabaseType type;
