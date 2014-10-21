@@ -12,6 +12,6 @@ public class PlayerException extends RuntimeException {
     }
 
     public void throwToPlayer(CommandSender s){
-        s.sendMessage(ChatColor.DARK_RED+"[Error]"+ChatColor.RED+getMessage());
+        s.sendMessage(ChatColor.DARK_RED+"[Error] "+ChatColor.RED+getMessage());
     }
 }
