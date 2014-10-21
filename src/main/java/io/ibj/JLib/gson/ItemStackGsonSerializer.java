@@ -1,6 +1,7 @@
 package io.ibj.JLib.gson;
 
 import com.google.gson.*;
+import io.ibj.JLib.utils.ItemMetaFactory;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -36,8 +37,9 @@ public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonD
             }
         }
         JsonElement d = base.get("displayname");
+        ItemMetaFactory imf = ItemMetaFactory.create(stack);
         if(d != null){
-            stack.getItemMeta().setDisplayName(d.getAsString());
+            imf.setDisplayName(d.getAsString());
         }
         d = base.get("lore");
         if (d != null) {
@@ -46,8 +48,9 @@ public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonD
             for(int i = 0; i<r.size(); i++){
                 lore.add(r.get(i).getAsString());
             }
-            stack.getItemMeta().setLore(lore);
+            imf.setLore(lore);
         }
+        imf.set();
         if(id == 403) { //Enchanted Book
 
             EnchantmentStorageMeta bookmeta = (EnchantmentStorageMeta) stack.getItemMeta();

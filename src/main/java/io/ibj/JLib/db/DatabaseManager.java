@@ -31,7 +31,7 @@ public class DatabaseManager {
     }
 
     public void cleanUpDatabaseSource(DatabaseConnectionDetails dbSource){
-        DatabaseSource source = dataStores.remove(dbSource);
+        DatabaseSource<?> source = dataStores.remove(dbSource);
         source.close();
     }
 
