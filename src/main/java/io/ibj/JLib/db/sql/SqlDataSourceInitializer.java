@@ -1,6 +1,7 @@
 package io.ibj.JLib.db.sql;
 
 import com.mchange.v2.c3p0.DataSources;
+import io.ibj.JLib.JLib;
 import io.ibj.JLib.db.AuthenticatedDatabaseConnectionDetails;
 import io.ibj.JLib.db.DataSourceInitializer;
 import io.ibj.JLib.db.DatabaseConnectionDetails;
@@ -19,9 +20,11 @@ public class SqlDataSourceInitializer implements DataSourceInitializer<Connectio
     public DatabaseSource<Connection> createNewDatasource(DatabaseConnectionDetails<Connection> details) {
         DataSource unpooled_ds;
         String connectionUrl = "jdbc:mysql://" + details.getHost() + ":" + details.getPort() + "/" + details.getKeyspace();
+        JLib.getI().getLogger().info("Creating new C3P0 connection pool connected to "+connectionUrl+".");
         if(details instanceof AuthenticatedDatabaseConnectionDetails){
             final AuthenticatedDatabaseConnectionDetails authenticatedDetails = (AuthenticatedDatabaseConnectionDetails) details;
             unpooled_ds = DataSources.unpooledDataSource(connectionUrl, authenticatedDetails.getUsername(), authenticatedDetails.getPassword());
+            JLib.getI().getLogger().info("With authentication: Username: "+authenticatedDetails.getUsername()+" Password: "+authenticatedDetails.getPassword());
         }
         else
         {
