@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -28,7 +29,7 @@ public class ResourceFile {
     JavaPlugin plugin;
     String resourceFile;
     File configFile;
-    Set<ResourceReloadHook> reloadHooks;
+    Set<ResourceReloadHook> reloadHooks = new HashSet<>();
 
     public File getFile(){
         return configFile;
