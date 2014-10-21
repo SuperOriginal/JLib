@@ -27,10 +27,11 @@ public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonD
         stack.setAmount(amt);
         stack.setData(new MaterialData(id,data));
         stack.setDurability(damage);
-        JsonArray enchants = base.get("enchantments").getAsJsonArray();
+        JsonElement enchants = base.get("enchantments");
         if(enchants != null){
-            for(int i = 0; i<enchants.size(); i++){
-                JsonObject ench = enchants.get(i).getAsJsonObject();
+            JsonArray enchantments = enchants.getAsJsonArray();
+            for(int i = 0; i<enchantments.size(); i++){
+                JsonObject ench = enchantments.get(i).getAsJsonObject();
                 stack.addUnsafeEnchantment(Enchantment.getByName(ench.get("name").getAsString()), ench.get("level").getAsInt());
             }
         }
