@@ -3,6 +3,7 @@ package io.ibj.JLib;
 import io.ibj.JLib.cmd.ICmd;
 import io.ibj.JLib.exceptions.PlayerException;
 import io.ibj.JLib.exceptions.PlayerInterruptedException;
+import io.ibj.JLib.file.ResourceFile;
 import io.ibj.JLib.file.YAMLFile;
 import io.ibj.JLib.gui.PageHolder;
 import io.ibj.JLib.safe.SafeRunnablePlayerWrapper;
@@ -11,6 +12,7 @@ import io.ibj.JLib.safe.SuperEventExecutor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -41,6 +43,18 @@ public abstract class JPlug extends JavaPlugin {
 
     YAMLFile formatsFile;
 
+    private Set<ResourceFile> resources;
+    private Set<Command> registeredCommands;
+
+    public void registerResource(ResourceFile resource){
+        resources.add(resource);
+    }
+
+    public void reload(){
+        for(ResourceFile file : resources){
+            file.reloadConfig();
+        }
+    }
     /////////////////////////////////
     //Events                       //
     /////////////////////////////////
@@ -139,8 +153,8 @@ public abstract class JPlug extends JavaPlugin {
     //Commands                     //
     /////////////////////////////////
 
-    public void registerCmd(Class<? extends ICmd> cmd){
-        JLib.getI().register(cmd, this);
+    public void registerCmd(Class<? extends ICmd> cmd)  {
+        registeredCommands.add(JLib.getI().register(cmd, this));
     }
 
 
@@ -313,6 +327,8 @@ public abstract class JPlug extends JavaPlugin {
             saveDefaultConfig();
             this.formatsFile = new YAMLFile(this, "formats.yml");
             this.formatsFile.saveDefaultConfig();
+            resources = new HashSet<>();
+            registeredCommands = new HashSet<>();
             onModuleEnable();
         } catch (Exception e) {
             handleError(e);
@@ -325,6 +341,11 @@ public abstract class JPlug extends JavaPlugin {
     public final void onDisable() {
         try {
             onModuleDisable();
+            for(Command command : registeredCommands){
+                command.unregister(JLib.getI().getCmdMap());
+            }
+            registeredCommands.clear();
+            resources.clear();
         } catch (Exception e) {
             handleError(e);
             onFailureToDisable();
@@ -362,5 +383,6 @@ public abstract class JPlug extends JavaPlugin {
     public final boolean hasFormat(String key) {
         return formatsFile.getConfig().contains(key);
     }
+
 
 }

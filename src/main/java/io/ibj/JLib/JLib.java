@@ -110,11 +110,17 @@ public class JLib extends JPlug {
         cmdMap.register(c.getName(),c);
     }
 
-    public void register(Class<? extends ICmd> c){
-        register(new RootCmdWrapper(CmdWrapper.wrap(c)));
+    public Command register(Class<? extends ICmd> c){
+        RootCmdWrapper c1 = new RootCmdWrapper(CmdWrapper.wrap(c));
+        register(c1);
+        return c1;
     }
 
-    public void register(Class<? extends ICmd> c, JPlug host){ register(new RootCmdWrapper(CmdWrapper.wrap(c),host));}
+    public Command register(Class<? extends ICmd> c, JPlug host){
+        RootCmdWrapper c1 = new RootCmdWrapper(CmdWrapper.wrap(c), host);
+        register(c1);
+        return c1;
+    }
 
     private static JLib i;
 
