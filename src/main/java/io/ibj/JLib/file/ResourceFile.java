@@ -12,10 +12,10 @@ import java.util.Set;
  */
 public class ResourceFile {
 
-    public ResourceFile(@NonNull JavaPlugin plugin, @NonNull String fileName) {
-        this(plugin, new File(plugin.getDataFolder(), fileName));
+    public ResourceFile(@NonNull JavaPlugin plugin, @NonNull String fileName, ResourceReloadHook... reloadHooks) {
+        this(plugin, new File(plugin.getDataFolder(), fileName),reloadHooks);
     }
-    public ResourceFile(@NonNull JavaPlugin plugin, File file) {
+    public ResourceFile(@NonNull JavaPlugin plugin, File file, ResourceReloadHook... reloadHook) {
         if (!plugin.isEnabled())
             throw new IllegalArgumentException("Plugin must be enabled");
         this.plugin = plugin;
@@ -24,6 +24,9 @@ public class ResourceFile {
         if (dataFolder == null)
             throw new IllegalStateException();
         this.configFile = file;
+        for(ResourceReloadHook hook : reloadHook){
+            reloadHooks.add(hook);
+        }
     }
 
     JavaPlugin plugin;

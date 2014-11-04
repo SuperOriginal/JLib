@@ -15,12 +15,12 @@ import java.util.logging.Level;
  * Created by Joe on 10/19/2014.
  */
 public class YAMLFile extends ResourceFile {
-    public YAMLFile(@NonNull JavaPlugin plugin, @NonNull String fileName) {
-        super(plugin, fileName);
+    public YAMLFile(@NonNull JavaPlugin plugin, @NonNull String fileName, ResourceReloadHook... reloadHooks) {
+        super(plugin, fileName,reloadHooks);
     }
 
-    public YAMLFile(@NonNull JavaPlugin plugin, @NonNull File file){
-        super(plugin,file);
+    public YAMLFile(@NonNull JavaPlugin plugin, @NonNull File file, ResourceReloadHook... reloadHooks){
+        super(plugin,file, reloadHooks);
     }
 
     FileConfiguration config;

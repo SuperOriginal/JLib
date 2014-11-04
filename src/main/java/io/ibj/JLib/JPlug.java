@@ -329,6 +329,7 @@ public abstract class JPlug extends JavaPlugin {
             this.formatsFile.saveDefaultConfig();
             resources = new HashSet<>();
             registeredCommands = new HashSet<>();
+            resources.add(formatsFile);
             onModuleEnable();
         } catch (Exception e) {
             handleError(e);
