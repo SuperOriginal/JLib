@@ -152,6 +152,7 @@
                             <include>com.fasterxml.jackson.core:jackson-core</include>
                             <include>com.mchange:c3p0</include>
                             <include>com.mchange:mchange-commons-java</include>
+                            <include>joda-time:joda-time</include>
                         </includes>
                     </artifactSet>
                 </configuration>
