@@ -18,9 +18,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * io.ibj.MattLib
@@ -35,6 +38,7 @@ public class JLib extends JPlug {
     }
 
     private CommandMap cmdMap = null;
+    private Map<String,Command> knownCommands;
 
     @Getter
     private Raven raven;
@@ -71,9 +75,10 @@ public class JLib extends JPlug {
             Field cmdMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             cmdMapField.setAccessible(true);
             cmdMap = (CommandMap) cmdMapField.get(Bukkit.getServer());
-        } catch (NoSuchFieldException e) {
-            handleError(e);
-        } catch (IllegalAccessException e) {
+            Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            knownCommandsField.setAccessible(true);
+            knownCommands = (Map<String, Command>) knownCommandsField.get(cmdMap);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             handleError(e);
         }
 
@@ -102,11 +107,15 @@ public class JLib extends JPlug {
         if(c instanceof RootCmdWrapper){
             if(((RootCmdWrapper) c).getWrapper().isAggresive()){
                 Command cmd = cmdMap.getCommand(c.getName());
-                if(cmd != null){
-                    cmd.unregister(cmdMap);
+                knownCommands.remove(cmd.getName());
+                getLogger().info("Unregistered command "+cmd.getName());
+                for(String alias : cmd.getAliases()){
+                    getLogger().info("  "+alias);
+                    knownCommands.remove(alias);
                 }
             }
         }
+        getLogger().info("Registering command "+c.getName());
         cmdMap.register(c.getName(),c);
     }
 

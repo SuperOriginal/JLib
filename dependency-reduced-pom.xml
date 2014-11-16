@@ -48,6 +48,7 @@
               <include>com.fasterxml.jackson.core:jackson-core</include>
               <include>com.mchange:c3p0</include>
               <include>com.mchange:mchange-commons-java</include>
+              <include>joda-time:joda-time</include>
             </includes>
           </artifactSet>
         </configuration>
@@ -95,12 +96,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.4</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
