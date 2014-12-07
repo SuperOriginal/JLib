@@ -5,10 +5,12 @@ import io.ibj.JLib.exceptions.PlayerException;
 import io.ibj.JLib.exceptions.PlayerInterruptedException;
 import io.ibj.JLib.file.ResourceFile;
 import io.ibj.JLib.file.YAMLFile;
+import io.ibj.JLib.format.Format;
 import io.ibj.JLib.gui.PageHolder;
 import io.ibj.JLib.safe.SafeRunnablePlayerWrapper;
 import io.ibj.JLib.safe.SafeRunnableWrapper;
 import io.ibj.JLib.safe.SuperEventExecutor;
+import io.ibj.JLib.utils.Colors;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,10 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -353,6 +352,7 @@ public abstract class JPlug extends JavaPlugin {
         }
     }
 
+    @Deprecated
     public final String getFormatRaw(String key, String... formatters) {
         FileConfiguration config = formatsFile.getConfig(); //Get the formats file
         if (!config.contains(key)) return null; //Check if it has this format key, and if not return null
@@ -364,23 +364,48 @@ public abstract class JPlug extends JavaPlugin {
         }
         return unFormattedString; //Return
     }
-
+    @Deprecated
     public final String getFormatRaw(String key){
         //noinspection NullArgumentToVariableArgMethod
         return getFormatRaw(key,null);
     }
+    @Deprecated
     public final String getFormat(String key, boolean prefix, String... formatters) {
         String formatRaw = getFormatRaw(key, formatters);
         String prefixString = getFormatRaw("prefix");
         return !prefix || prefixString == null ? formatRaw : prefixString + formatRaw;
     }
+    @Deprecated
     public final String getFormat(String key, String... formatters) {
         return getFormat(key, true, formatters);
     }
+    @Deprecated
     public final String getFormat(String key) {
         //noinspection NullArgumentToVariableArgMethod
         return getFormat(key, true, null);
     }
+
+    public final Format getF(String key){
+        FileConfiguration config = formatsFile.getConfig(); //Get the formats file
+        if (!config.contains(key)) return null; //Check if it has this format key, and if not return null
+        List<String> format;
+        if(config.isList(key)){
+            format = config.getStringList(key);
+        }
+        else
+        {
+            format = new ArrayList<>(1);
+            format.add(config.getString(key,null));
+
+        }
+        Iterator<String> listIterator = format.iterator();
+        format = new ArrayList<>(format.size());
+        while(listIterator.hasNext()){
+            format.add(Colors.colorify(listIterator.next()));
+        }
+        return new Format(getFormat("prefix"),format.toArray(new String[format.size()]));
+    }
+
     public final boolean hasFormat(String key) {
         return formatsFile.getConfig().contains(key);
     }

@@ -9,6 +9,9 @@ import java.util.UUID;
  */
 public class UUIDUtils {
     public static byte[] toBytes(UUID id){
+        if(id == null){
+            return null;
+        }
         byte[] bytes = new byte[16];
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         buffer.order(ByteOrder.BIG_ENDIAN);
@@ -18,6 +21,9 @@ public class UUIDUtils {
     }
 
     public static UUID fromBytes(byte[] bytes){
+        if(bytes == null){
+            return null;
+        }
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         return new UUID(buffer.getLong(),buffer.getLong());
     }
