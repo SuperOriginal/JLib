@@ -81,7 +81,7 @@ public class Format {
                     case FIRST_LINE:
                         boolean sent = false;
                         for (String message : messages) {
-                            player.sendMessage(sent ? tag + message : message);
+                            player.sendMessage(!sent ? tag + message : message);
                             sent = true;
                         }
                         break;
