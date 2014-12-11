@@ -198,18 +198,12 @@ public class ScriptRunner {
             if (!autoCommit) {
                 conn.commit();
             }
-        } catch (SQLException e) {
-            e.fillInStackTrace();
-            printlnError("Error executing: " + command);
-            printlnError(e);
-            throw e;
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             e.fillInStackTrace();
             printlnError("Error executing: " + command);
             printlnError(e);
             throw e;
         } finally {
-            conn.rollback();
             flush();
         }
     }
