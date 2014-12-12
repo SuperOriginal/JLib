@@ -52,7 +52,7 @@ public class Format {
                 case FIRST_LINE:
                     boolean sent = false;
                     for(String message: messages){
-                        sender.sendMessage(sent ? tag + message : message);
+                        sender.sendMessage(!sent ? tag + message : message);
                         sent  = true;
                     }
                     break;
