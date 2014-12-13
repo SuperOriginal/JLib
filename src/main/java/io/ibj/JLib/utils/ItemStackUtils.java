@@ -10,6 +10,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
@@ -149,6 +150,9 @@ public class ItemStackUtils {
                 }
                 obj.add("storedEnchantments",storedEnchants);
             }
+            else if(stack.getType() == Material.SKULL_ITEM && ((SkullMeta) stack.getItemMeta()).hasOwner()){
+                obj.addProperty("skull_owner", ((SkullMeta) stack.getItemMeta()).getOwner());
+            }
         }
         return compiler.toJson(obj);
     }
@@ -194,6 +198,11 @@ public class ItemStackUtils {
                 }
             }
             stack.setItemMeta(bookmeta);
+        }
+        if(id == 397 && base.has("skull_owner")){
+            SkullMeta meta = ((SkullMeta) stack.getItemMeta());
+            meta.setOwner(base.get("skull_owner").getAsString());
+            stack.setItemMeta(meta);
         }
 
         return stack;

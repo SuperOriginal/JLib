@@ -396,7 +396,6 @@ public abstract class JPlug extends JavaPlugin {
         {
             format = new ArrayList<>(1);
             format.add(config.getString(key,null));
-
         }
         Iterator<String> listIterator = format.iterator();
         format = new ArrayList<>(format.size());
