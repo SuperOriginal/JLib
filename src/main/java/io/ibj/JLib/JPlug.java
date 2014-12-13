@@ -402,7 +402,7 @@ public abstract class JPlug extends JavaPlugin {
         while(listIterator.hasNext()){
             format.add(Colors.colorify(listIterator.next()));
         }
-        return new Format(getFormat("prefix"),format.toArray(new String[format.size()]));
+        return new Format(getFormat("prefix",false),format.toArray(new String[format.size()]));
     }
 
     public final boolean hasFormat(String key) {
