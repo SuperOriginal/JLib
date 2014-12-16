@@ -5,11 +5,14 @@ import com.google.gson.*;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
@@ -101,6 +104,11 @@ public class ItemStackUtils {
                 }
                 ret.append("storedEnchants",storedEnchants);
             }
+            else if(stack.hasItemMeta()){
+                if(stack.getItemMeta() instanceof LeatherArmorMeta){
+                    ret.append("color",((LeatherArmorMeta) stack.getItemMeta()).getColor().asRGB());
+                }
+            }
         }
 
         return ret;
@@ -153,6 +161,9 @@ public class ItemStackUtils {
             else if(stack.getType() == Material.SKULL_ITEM && ((SkullMeta) stack.getItemMeta()).hasOwner()){
                 obj.addProperty("skull_owner", ((SkullMeta) stack.getItemMeta()).getOwner());
             }
+            else if(stack.hasItemMeta() && stack.getItemMeta() instanceof LeatherArmorMeta){
+                obj.addProperty("color",((LeatherArmorMeta) stack.getItemMeta()).getColor().asRGB());
+            }
         }
         return compiler.toJson(obj);
     }
@@ -200,11 +211,15 @@ public class ItemStackUtils {
             stack.setItemMeta(bookmeta);
         }
         if(id == 397 && base.has("skull_owner")){
-            SkullMeta meta = ((SkullMeta) stack.getItemMeta());
+            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
             meta.setOwner(base.get("skull_owner").getAsString());
             stack.setItemMeta(meta);
         }
-
+        if(base.has("color")){
+            LeatherArmorMeta meta = (LeatherArmorMeta) Bukkit.getItemFactory().getItemMeta(Material.getMaterial(id));
+            meta.setColor(Color.fromRGB(base.get("color").getAsInt()));
+            stack.setItemMeta(meta);
+        }
         return stack;
     }
 

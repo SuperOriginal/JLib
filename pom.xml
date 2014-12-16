@@ -40,9 +40,9 @@
             <version>1.14.0</version>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.7.10-R0.1-SNAPSHOT</version>
+            <groupId>org.spigot</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8-R0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
