@@ -1,6 +1,8 @@
 package io.ibj.JLib.db.sql;
 
-import com.mchange.v2.c3p0.DataSources;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.ibj.JLib.JLib;
 import io.ibj.JLib.db.AuthenticatedDatabaseConnectionDetails;
 import io.ibj.JLib.db.DataSourceInitializer;
@@ -8,7 +10,6 @@ import io.ibj.JLib.db.DatabaseConnectionDetails;
 import io.ibj.JLib.db.DatabaseSource;
 import lombok.SneakyThrows;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
@@ -18,19 +19,17 @@ public class SqlDataSourceInitializer implements DataSourceInitializer<Connectio
     @Override
     @SneakyThrows
     public DatabaseSource<Connection> createNewDatasource(DatabaseConnectionDetails<Connection> details) {
-        DataSource unpooled_ds;
         String connectionUrl = "jdbc:mysql://" + details.getHost() + ":" + details.getPort() + "/" + details.getKeyspace();
-        JLib.getI().getLogger().info("Creating new C3P0 connection pool connected to "+connectionUrl+".");
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(connectionUrl);
+        JLib.getI().getLogger().info("Creating new Hikari connection pool connected to "+connectionUrl+".");
         if(details instanceof AuthenticatedDatabaseConnectionDetails){
             final AuthenticatedDatabaseConnectionDetails authenticatedDetails = (AuthenticatedDatabaseConnectionDetails) details;
-            unpooled_ds = DataSources.unpooledDataSource(connectionUrl, authenticatedDetails.getUsername(), authenticatedDetails.getPassword());
             JLib.getI().getLogger().info("With authentication: Username: "+authenticatedDetails.getUsername()+" Password: "+authenticatedDetails.getPassword());
-        }
-        else
-        {
-            unpooled_ds = DataSources.unpooledDataSource(connectionUrl);
+            config.setUsername(authenticatedDetails.getUsername());
+            config.setPassword(authenticatedDetails.getPassword());
         }
 
-        return new SqlDataSource(DataSources.pooledDataSource(unpooled_ds));
+        return new SqlDataSource(new HikariDataSource(config));
     }
 }
