@@ -1,6 +1,6 @@
 package io.ibj.JLib.db.sql;
 
-import com.mchange.v2.c3p0.PooledDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import io.ibj.JLib.db.DatabaseSource;
 import lombok.SneakyThrows;
 
@@ -27,8 +27,8 @@ public class SqlDataSource implements DatabaseSource<Connection> {
     @Override
     @SneakyThrows
     public void close() {
-        if(source instanceof PooledDataSource){
-            ((PooledDataSource) source).close();
+        if(source instanceof HikariDataSource){
+            ((HikariDataSource) source).close();
         }
     }
 }
