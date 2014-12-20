@@ -387,7 +387,7 @@ public abstract class JPlug extends JavaPlugin {
 
     public final Format getF(String key){
         FileConfiguration config = formatsFile.getConfig(); //Get the formats file
-        if (!config.contains(key)) return null; //Check if it has this format key, and if not return null
+        if (!config.contains(key)) return new Format(); //Check if it has this format key, and if not return null
         List<String> format;
         if(config.isList(key)){
             format = config.getStringList(key);
