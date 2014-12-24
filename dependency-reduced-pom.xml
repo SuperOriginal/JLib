@@ -46,9 +46,9 @@
               <include>org.slf4j:slf4j-api</include>
               <include>org.slf4j:slf4j-simple</include>
               <include>com.fasterxml.jackson.core:jackson-core</include>
-              <include>com.mchange:c3p0</include>
-              <include>com.mchange:mchange-commons-java</include>
+              <include>com.zaxxer:HikariCP-java6</include>
               <include>joda-time:joda-time</include>
+              <include>org.javassist:javassist</include>
             </includes>
           </artifactSet>
         </configuration>

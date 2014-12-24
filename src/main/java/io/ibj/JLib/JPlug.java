@@ -342,7 +342,7 @@ public abstract class JPlug extends JavaPlugin {
         try {
             onModuleDisable();
             for(Command command : registeredCommands){
-                command.unregister(JLib.getI().getCmdMap());
+                JLib.getI().unregister(command);
             }
             registeredCommands.clear();
             resources.clear();

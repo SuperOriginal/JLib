@@ -22,7 +22,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -58,7 +58,7 @@ public class JLib extends JPlug {
     }
 
     @Getter
-    private Gson gson = new Gson();
+    private Gson gson = new Gson(); //TODO: Add chat to serializers
 
     public void onModuleEnable(){
 
@@ -101,6 +101,15 @@ public class JLib extends JPlug {
 
     public void onModuleDisable(){
         dbManager.cleanUpAll();
+    }
+
+    public void unregister(Command c){
+        Iterator<Map.Entry<String,Command>> iterator = knownCommands.entrySet().iterator();
+        while(iterator.hasNext()){
+            if(iterator.next().getValue() == c){
+                iterator.remove();
+            }
+        }
     }
 
     public void register(Command c){

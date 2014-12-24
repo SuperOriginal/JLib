@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
  * Created by Joe
  * Project: MattShops
  */
+@Deprecated
 public class ReflectionUtils {
     private static String mcVersion = "net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3]+".";
     private static String cbVersion = "org.bukkit.craftbukkit."+ Bukkit.getServer().getClass().getPackage().getName().replace(".",",").split(",")[3]+".";
@@ -49,15 +50,7 @@ public class ReflectionUtils {
             }
 
             sendPacket.invoke(conn,packet);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException | NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
