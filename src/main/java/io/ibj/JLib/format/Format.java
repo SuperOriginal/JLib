@@ -1,31 +1,89 @@
 package io.ibj.JLib.format;
 
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import io.ibj.JLib.JLib;
+import io.ibj.JLib.chat.FancyMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by joe on 12/6/14.
  */
-public class Format {
+public class Format implements Cloneable {
 
     public Format(String... msg){
-        this.messages = msg;
+        this(new Format(""), msg);
     }
 
-    public Format(String tag, String... msg){
-        this.tag = tag;
-        this.messages = msg;
+    public Format(Format tag, String... msg) {
+        this.tag = tag.getInternalMPart().size() == 0 ? new MSection() : tag.getInternalMPart().get(0);
+        for(String s : msg){
+            //Gotta parse it fast!
+            char[] chars = s.toCharArray();
+            Integer pointer = 0;
+            StringBuilder currentString = new StringBuilder();
+            boolean ignoreNext = false;
+            Deque<MSection> partQueue = new LinkedBlockingDeque<>();
+            partQueue.add(new MSection());
+            while(pointer < chars.length){
+                char currentChar = chars[pointer];
+                if(!ignoreNext){
+                    if(currentChar == '\\'){
+                        ignoreNext = true;
+                        pointer++;
+                        continue;
+                    }
+                    else if(currentChar == '{'){
+                        //Starting of inter config section
+                        pointer = internalsParse(chars, pointer, partQueue.peekLast()) + 1;
+                        continue;
+                    }
+                    else if(currentChar == '['){
+                        if(currentString.length() > 0){
+                            partQueue.peekLast().appendText(currentString.toString());
+                            currentString = new StringBuilder();
+                        }
+                        partQueue.addLast(partQueue.getLast().appendSection());
+                        pointer++;
+                        continue;
+                    }
+                    else if(currentChar == ']'){
+                        MSection section = partQueue.pollLast(); //Remove last item from section
+                        if(currentString.length() > 0){
+                            section.appendText(currentString.toString());
+                            currentString = new StringBuilder();
+                        }
+                        pointer++;
+                        continue;
+                    }
+                }
+                else
+                {
+                    ignoreNext = false;
+                }
+                currentString.append(currentChar);
+                pointer++;
+            }
+            if(partQueue.isEmpty()){
+                throw new RuntimeException("Illegal formatting!");
+            }
+            partQueue.peekLast().appendText(currentString.toString());
+            messages.add(partQueue.pollFirst());
+        }
     }
 
-    String tag = null;
-    String[] messages;
+    MPart tag = null;
+    List<MPart> messages = new ArrayList<>();
     TagStyle tagStyle = TagStyle.FIRST_LINE;
 
-    public Format setTag(String tag){
-        this.tag = tag;
+    public Format setTag(Format tag){
+        this.tag = tag.getInternalMPart().get(0);
         return this;
     }
 
@@ -35,75 +93,124 @@ public class Format {
     }
 
     public Format replace(String key, Object replacement){
-        for(int i = 0; i< messages.length; i++){
-            messages[i] = messages[i].replace(key,replacement.toString());
+        String strReplacement = replacement.toString();
+        for(MPart part : messages){
+            part.replace(key,strReplacement);
         }
         return this;
+    }
+
+    private int internalsParse(char[] chars, Integer pointer, MSection toApply){
+        StringBuilder jsonRaw = new StringBuilder();
+        int jsonLevels = 0;
+        boolean ignoreBackslash = false;
+        boolean ignoreQuotes = false;
+        char lastQuoteChar = ' ';
+        while(pointer < chars.length){
+            if(!ignoreBackslash) {
+                if (chars[pointer] == '{') {
+                    jsonLevels++;
+                } else if (chars[pointer] == '}') {
+                    jsonLevels--;
+                    if (jsonLevels == 0) {
+                        jsonRaw.append('}');
+                        break;
+                    }
+                } else if (chars[pointer] == '"' || chars[pointer] == '\'') {
+                    if (ignoreQuotes) {
+                        if (lastQuoteChar == chars[pointer]) {
+                            ignoreQuotes = false;
+                        }
+                    } else {
+                        lastQuoteChar = chars[pointer];
+                        ignoreQuotes = true;
+                    }
+                }
+                else if(chars[pointer] == '\\'){
+                    ignoreBackslash = true;
+                }
+            }
+            else{
+                ignoreBackslash = false;
+            }
+            jsonRaw.append(chars[pointer]);
+            pointer++;
+        }
+        String json = jsonRaw.toString();
+        JsonObject object = JLib.getI().getGson().fromJson(json, JsonObject.class);
+        if(object.has("open_url")){
+            toApply.setClickParams("open_url",object.get("open_url").getAsString());
+        }
+        else if(object.has("open_file")){
+            toApply.setClickParams("open_file",object.get("open_file").getAsString());
+        }
+        else if(object.has("run_command")){
+            toApply.setClickParams("run_command",object.get("run_command").getAsString());
+        }
+        else if (object.has("suggest_command")) {
+            toApply.setClickParams("suggest_command",object.get("suggest_command").getAsString());
+        }
+
+        if(object.has("hover")){
+            JsonArray array = object.getAsJsonArray("hover");
+            String[] strings = new String[array.size()];
+            for(int i = 0; i<array.size(); i++){
+                strings[i] = array.get(i).getAsString();
+            }
+            toApply.setHover(strings);
+        }
+        return pointer;
     }
 
     public Format sendTo(CommandSender... senders){
-        for(CommandSender sender : senders){
-            switch(tagStyle){
-                case EVERY_LINE:
-                    for(String message : messages){
-                        sender.sendMessage(tag+message);
-                    }
-                    break;
-                case FIRST_LINE:
-                    boolean sent = false;
-                    for(String message: messages){
-                        if(!sent){
-                            sender.sendMessage(tag+message);
-                            sent = true;
-                        }
-                        else{
-                            sender.sendMessage(message);
-                        }
-                    }
-                    break;
-                case HIDDEN:
-                    for(String message : messages){
-                        sender.sendMessage(message);
-                    }
-                    break;
-
+        boolean sentFirst = false;
+        for(MPart part : messages) {
+            List<ChatPart> total = new LinkedList<>();
+            if(tagStyle == TagStyle.EVERY_LINE || (tagStyle == TagStyle.FIRST_LINE && !sentFirst)) {
+                total.addAll(tag.flatten(new ChatPart()));
             }
-
+            if (total.size() > 0) {
+                total.addAll(part.flatten(total.get(total.size() - 1)));
+            } else {
+                total.addAll(part.flatten(new ChatPart()));
+            }
+            FancyMessage message = new FancyMessage("");
+            for (ChatPart chatPart : part.flatten(new ChatPart())) {
+                chatPart.appendToFancyMessage(message);
+            }
+            for (CommandSender sender : senders) {
+                message.send(sender);
+            }
+            sentFirst = true;
         }
         return this;
     }
-
+    
     public Format sendTo(UUID... players){
+        Set<CommandSender> senders = new HashSet<>();
         for(UUID id : players){
             Player player = Bukkit.getPlayer(id);
             if(player != null){
-                switch(tagStyle) {
-                    case EVERY_LINE:
-                        for (String message : messages) {
-                            player.sendMessage(tag + message);
-                        }
-                        break;
-                    case FIRST_LINE:
-                        boolean sent = false;
-                        for (String message : messages) {
-                            player.sendMessage(!sent ? tag + message : message);
-                            sent = true;
-                        }
-                        break;
-                    case HIDDEN:
-                        for (String message : messages) {
-                            player.sendMessage(message);
-                        }
-                        break;
-                }
-
+                senders.add(player);
             }
         }
+        sendTo(senders.toArray(new CommandSender[senders.size()]));
         return this;
     }
-
-    public String[] getMessages(){
-        return messages;
+    
+    public List<MPart> getInternalMPart(){
+        return ImmutableList.copyOf(messages);
     }
 
+    @Override
+    public Format clone() {
+        Format ret = new Format();
+        ret.messages = new LinkedList<>();
+        for(MPart part : messages){
+            ret.messages.add(part.clone());
+        }
+        ret.tag = tag == null ? null : tag.clone();
+        ret.tagStyle = tagStyle;
+        return ret;
+    }
 }

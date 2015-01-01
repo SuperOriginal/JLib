@@ -11,11 +11,13 @@ import org.bukkit.command.CommandSender;
 public class PlayerException extends RuntimeException {
     public PlayerException(String message){
         super(message);
+        f = new Format(errorFormat,message);
     }
+    
+    private static final Format errorFormat = new Format("&4[Error] &c");
+    
     public PlayerException(Format f){
-
-        f.setTag(ChatColor.DARK_RED+"[Error] "+ChatColor.RED);
-        f.setTagStyle(TagStyle.FIRST_LINE);
+        f.setTag(errorFormat);
         this.f = f;
     }
 

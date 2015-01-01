@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.ibj</groupId>
   <artifactId>JLib</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <build>
     <plugins>
       <plugin>
@@ -49,6 +49,7 @@
               <include>com.zaxxer:HikariCP-java6</include>
               <include>joda-time:joda-time</include>
               <include>org.javassist:javassist</include>
+              <include>org.ocpsoft.prettytime:prettytime</include>
             </includes>
           </artifactSet>
         </configuration>

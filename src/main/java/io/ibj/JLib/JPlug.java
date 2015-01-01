@@ -4,8 +4,10 @@ import io.ibj.JLib.cmd.ICmd;
 import io.ibj.JLib.exceptions.PlayerException;
 import io.ibj.JLib.exceptions.PlayerInterruptedException;
 import io.ibj.JLib.file.ResourceFile;
+import io.ibj.JLib.file.ResourceReloadHook;
 import io.ibj.JLib.file.YAMLFile;
 import io.ibj.JLib.format.Format;
+import io.ibj.JLib.format.TagStyle;
 import io.ibj.JLib.gui.PageHolder;
 import io.ibj.JLib.safe.SafeRunnablePlayerWrapper;
 import io.ibj.JLib.safe.SafeRunnableWrapper;
@@ -326,15 +328,21 @@ public abstract class JPlug extends JavaPlugin {
             saveDefaultConfig();
             this.formatsFile = new YAMLFile(this, "formats.yml");
             this.formatsFile.saveDefaultConfig();
+            registerResource(formatsFile);
+            formatsFile.addReloadHook(new ResourceReloadHook() {
+                @Override
+                public void onReload(ResourceFile file) {
+                    formatsFile = ((YAMLFile) file);
+                    loadFormats();
+                }
+            });
             resources = new HashSet<>();
             registeredCommands = new HashSet<>();
-            resources.add(formatsFile);
             onModuleEnable();
         } catch (Exception e) {
             handleError(e);
             onFailureToEnable();
             getServer().getPluginManager().disablePlugin(this);
-            return;
         }
     }
     @Override
@@ -385,28 +393,38 @@ public abstract class JPlug extends JavaPlugin {
         return getFormat(key, true, null);
     }
 
+    private Map<String, Format> formatMap = new HashMap<>();
+    
+    private void loadFormats(){
+        FileConfiguration config = formatsFile.getConfig();
+        for(String key : config.getKeys(true)){
+            if(config.isString(key)){
+                formatMap.put(key,new Format(Colors.colorify(config.getString(key))));
+            }
+            else if(config.isList(key)){
+                List<String> stringList = config.getStringList(key);
+                String[] msg = stringList.toArray(new String[stringList.size()]);
+                for(int i = 0; i<msg.length; i++){
+                    msg[i] = Colors.colorify(msg[i]);
+                }
+                formatMap.put(key,new Format(msg));
+            }
+        }
+    }
+    
     public final Format getF(String key){
-        FileConfiguration config = formatsFile.getConfig(); //Get the formats file
-        if (!config.contains(key)) return new Format(); //Check if it has this format key, and if not return null
-        List<String> format;
-        if(config.isList(key)){
-            format = config.getStringList(key);
+        Format f = formatMap.get(key);
+        if(f == null){
+            return new Format();
         }
-        else
-        {
-            format = new ArrayList<>(1);
-            format.add(config.getString(key,null));
-        }
-        Iterator<String> listIterator = format.iterator();
-        format = new ArrayList<>(format.size());
-        while(listIterator.hasNext()){
-            format.add(Colors.colorify(listIterator.next()));
-        }
-        return new Format(Colors.colorify(config.getString("prefix")),format.toArray(new String[format.size()]));
+        f = f.clone();
+        f.setTag(formatMap.get("prefix"));
+        f.setTagStyle(TagStyle.FIRST_LINE);
+        return f;
     }
 
     public final boolean hasFormat(String key) {
-        return formatsFile.getConfig().contains(key);
+        return formatMap.containsKey(key);
     }
 
 
