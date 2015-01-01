@@ -328,6 +328,7 @@ public abstract class JPlug extends JavaPlugin {
             saveDefaultConfig();
             this.formatsFile = new YAMLFile(this, "formats.yml");
             this.formatsFile.saveDefaultConfig();
+            resources = new HashSet<>();
             registerResource(formatsFile);
             formatsFile.addReloadHook(new ResourceReloadHook() {
                 @Override
@@ -336,7 +337,6 @@ public abstract class JPlug extends JavaPlugin {
                     loadFormats();
                 }
             });
-            resources = new HashSet<>();
             registeredCommands = new HashSet<>();
             onModuleEnable();
         } catch (Exception e) {

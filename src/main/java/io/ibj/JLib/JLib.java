@@ -58,7 +58,7 @@ public class JLib extends JPlug {
     }
 
     @Getter
-    private Gson gson = new Gson(); //TODO: Add chat to serializers
+    private Gson gson = new Gson();
 
     public void onModuleEnable(){
 
