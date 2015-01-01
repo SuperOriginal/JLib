@@ -82,8 +82,10 @@ public class TextPart implements MPart {
         {
             insert = prime.insert;
         }
-        for(int i = 0; i<hover.length; i++){
-            hover[i] = Colors.colorify(hover[i]);
+        if(hover != null) {
+            for (int i = 0; i < hover.length; i++) {
+                hover[i] = Colors.colorify(hover[i]);
+            }
         }
         ChatPart currentPart = null;
         List<ChatPart> ret = new LinkedList<ChatPart>();
