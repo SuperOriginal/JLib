@@ -18,11 +18,17 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class Format implements Cloneable {
 
     public Format(String... msg){
-        this(new Format(""), msg);
+        this(null, msg);
     }
 
     public Format(Format tag, String... msg) {
-        this.tag = tag.getInternalMPart().size() == 0 ? new MSection() : tag.getInternalMPart().get(0);
+        if(tag != null) {
+            this.tag = tag.getInternalMPart().size() == 0 ? new MSection() : tag.getInternalMPart().get(0);
+        }
+        else
+        {
+            this.tag = new TextPart("");
+        }
         for(String s : msg){
             //Gotta parse it fast!
             char[] chars = s.toCharArray();
