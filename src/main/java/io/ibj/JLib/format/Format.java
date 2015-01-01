@@ -169,6 +169,28 @@ public class Format implements Cloneable {
     }
 
     public Format sendTo(CommandSender... senders){
+        for(FancyMessage message : constructFancyMessage()){
+            for(CommandSender sender : senders){
+                message.send(sender);
+            }
+        }
+        return this;
+    }
+    
+    public Format sendTo(UUID... players){
+        Set<CommandSender> senders = new HashSet<>();
+        for(UUID id : players){
+            Player player = Bukkit.getPlayer(id);
+            if(player != null){
+                senders.add(player);
+            }
+        }
+        sendTo(senders.toArray(new CommandSender[senders.size()]));
+        return this;
+    }
+    
+    public List<FancyMessage> constructFancyMessage(){
+        List<FancyMessage> ret = new ArrayList<>(messages.size());
         boolean sentFirst = false;
         for(MPart part : messages) {
             List<ChatPart> total = new LinkedList<>();
@@ -184,24 +206,10 @@ public class Format implements Cloneable {
             for (ChatPart chatPart : part.flatten(new ChatPart())) {
                 chatPart.appendToFancyMessage(message);
             }
-            for (CommandSender sender : senders) {
-                message.send(sender);
-            }
+            ret.add(message);
             sentFirst = true;
         }
-        return this;
-    }
-    
-    public Format sendTo(UUID... players){
-        Set<CommandSender> senders = new HashSet<>();
-        for(UUID id : players){
-            Player player = Bukkit.getPlayer(id);
-            if(player != null){
-                senders.add(player);
-            }
-        }
-        sendTo(senders.toArray(new CommandSender[senders.size()]));
-        return this;
+        return ret;
     }
     
     public List<MPart> getInternalMPart(){
