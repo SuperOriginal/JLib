@@ -1,4 +1,4 @@
 name: JLib
 main: io.ibj.JLib.JLib
-version: 1.1.4
+version: 1.1.5
 softdepend: [ DebugServer, Essentials ]

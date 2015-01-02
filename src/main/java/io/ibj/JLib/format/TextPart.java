@@ -67,6 +67,7 @@ public class TextPart implements MPart {
             clickValue = prime.clickValue;
         }
         String[] hover;
+
         if(this.hover != null){
             hover = this.hover;
         }
@@ -82,6 +83,7 @@ public class TextPart implements MPart {
         {
             insert = prime.insert;
         }
+
         if(hover != null) {
             for (int i = 0; i < hover.length; i++) {
                 hover[i] = Colors.colorify(hover[i]);
@@ -101,7 +103,7 @@ public class TextPart implements MPart {
                 currentBuilder = new StringBuilder();
             }
 
-            if(chars[pointer] == '&'){
+            if(chars[pointer] == ChatColor.COLOR_CHAR){
                 if(pointer+1 < chars.length) { //Got another char to read a colorcode from
                     ChatColor chatColor = ChatColor.getByChar(chars[pointer+1]);
                     if(chatColor != null){
@@ -130,7 +132,10 @@ public class TextPart implements MPart {
                         {
                             if(!arrayContains(currentFormats, chatColor)){
                                 split = true;
-                                currentFormats = new ChatColor[currentFormats.length+1];
+                                ChatColor[] temp = new ChatColor[currentFormats.length+1];
+                                System.arraycopy(currentFormats,0,temp,0, currentFormats.length);
+                                temp[temp.length-1] = chatColor;
+                                currentFormats = temp;
                             }
                         }
                         if(split){
@@ -188,8 +193,15 @@ public class TextPart implements MPart {
         TextPart ret = new TextPart(text);
         ret.clickAction = clickAction;
         ret.clickValue = clickValue;
-        ret.hover = new String[hover.length];
-        System.arraycopy(hover, 0, ret.hover, 0, hover.length);
+        if(hover != null) {
+            ret.hover = new String[hover.length];        
+            System.arraycopy(hover, 0, ret.hover, 0, hover.length);
+
+        }
+        else
+        {
+            ret.hover = null;
+        }
         ret.insert = insert;
         return ret;
     }

@@ -16,12 +16,18 @@ public class MSection implements MPart{
         MSection ret = new MSection();
         ret.subParts = new LinkedList<>();
         for(MPart p : this.subParts){
-            subParts.add(p.clone());
+            ret.subParts.add(p.clone());
         }
         ret.clickAction = clickAction;
         ret.clickValue = clickValue;
-        ret.hover = new String[hover.length];
-        System.arraycopy(hover, 0, ret.hover, 0, hover.length);
+        if(hover != null) {
+            ret.hover = new String[hover.length];
+            System.arraycopy(hover, 0, ret.hover, 0, hover.length);
+        }
+        else
+        {
+            ret.hover = null;
+        }
         ret.insert = insert;
         return ret;
     }
@@ -45,10 +51,15 @@ public class MSection implements MPart{
             prime.hover = hover;
         if(insert != null)
             prime.insert = insert;
+        
+        ChatPart localizeChatPart = prime.clone();
+
         for(MPart part : subParts){
             List<ChatPart> flatten = part.flatten(prime);
             ret.addAll(flatten);
-            prime = flatten.get(flatten.size()-1);
+            localizeChatPart.color = prime.color;
+            localizeChatPart.formatting = prime.formatting;
+            prime = localizeChatPart.clone();
         }
         return ret;
     }
@@ -59,13 +70,13 @@ public class MSection implements MPart{
             p.replace(s,o);
         }
         if(clickValue!= null)
-            clickValue = clickValue.replace(s,o.toString());
+            clickValue = clickValue.replace(s, o);
         if(hover != null)
             for(int i = 0; i<hover.length; i++){
-                hover[i] = hover[i].replace(s,o.toString());
+                hover[i] = hover[i].replace(s, o);
             }
         if(insert != null)
-            insert = insert.replace(s,o.toString());
+            insert = insert.replace(s, o);
     }
 
     @Override

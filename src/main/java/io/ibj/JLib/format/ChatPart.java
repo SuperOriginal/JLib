@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 /**
  * Created by joe on 12/30/2014.
  */
-public class ChatPart implements ChatActionable
+public class ChatPart implements ChatActionable, Cloneable
 {
     String text;
     String clickAction;
@@ -73,5 +73,32 @@ public class ChatPart implements ChatActionable
         if(getFormatting() != null && getFormatting().length > 0){
             fancyMessage.style(getFormatting());
         }
+    }
+
+    @Override
+    public ChatPart clone() {
+        ChatPart part = new ChatPart();
+        part.text = text;
+        part.clickAction = clickAction;
+        part.clickValue = clickValue;
+        if(hover != null) {
+            part.hover = new String[hover.length];
+            System.arraycopy(hover, 0, part.hover, 0, hover.length);
+        }
+        else
+        {
+            part.hover = null;
+        }
+        part.insert = insert;
+        part.color = color;
+        if(formatting != null) {
+            part.formatting = new ChatColor[formatting.length];
+            System.arraycopy(formatting, 0, part.formatting, 0, formatting.length);
+        }
+        else
+        {
+            part.formatting = null;
+        }
+        return part;
     }
 }
