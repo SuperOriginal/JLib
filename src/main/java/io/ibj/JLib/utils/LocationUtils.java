@@ -1,5 +1,6 @@
 package io.ibj.JLib.utils;
 
+import com.google.gson.JsonObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import io.ibj.JLib.utils.exceptions.WorldNotFoundException;
@@ -35,5 +36,30 @@ public class LocationUtils {
             throw new WorldNotFoundException((String) obj.get("world"));
         }
         return new Location(w, ((Double) obj.get("x")), ((Double) obj.get("y")), ((Double) obj.get("z")), ((Double) obj.get("yaw")).floatValue(), ((Double) obj.get("pitch")).floatValue());
+    }
+    
+    public static JsonObject toJsonObject(Location l){
+        if(l == null){
+            return null;
+        }
+        JsonObject ret = new JsonObject();
+        ret.addProperty("world",l.getWorld().getName());
+        ret.addProperty("x",l.getX());
+        ret.addProperty("y",l.getY());
+        ret.addProperty("z",l.getZ());
+        ret.addProperty("yaw",l.getYaw());
+        ret.addProperty("pitch",l.getPitch());
+        return ret;
+    }
+    
+    public static Location fromJsonObject(JsonObject object) throws WorldNotFoundException {
+        if(object == null){
+            return null;
+        }
+        World w = Bukkit.getWorld(object.get("world").getAsString());
+        if(w == null){
+            throw new WorldNotFoundException(object.get("world").getAsString());
+        }
+        return new Location(w,object.get("x").getAsDouble(),object.get("y").getAsDouble(),object.get("z").getAsDouble(),object.get("yaw").getAsFloat(),object.get("pitch").getAsFloat());
     }
 }

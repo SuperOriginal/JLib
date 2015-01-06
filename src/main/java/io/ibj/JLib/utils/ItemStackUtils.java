@@ -113,8 +113,8 @@ public class ItemStackUtils {
 
         return ret;
     }
-
-    public static String toString(ItemStack stack, Gson compiler){
+    
+    public static JsonObject toJsonObject(ItemStack stack){
         JsonObject obj = new JsonObject();
         if(stack == null){
             obj.addProperty("id",0);
@@ -165,11 +165,14 @@ public class ItemStackUtils {
                 obj.addProperty("color",((LeatherArmorMeta) stack.getItemMeta()).getColor().asRGB());
             }
         }
-        return compiler.toJson(obj);
+        return obj;
     }
 
-    public static ItemStack toStack(String str, Gson compiler){
-        JsonObject base = compiler.fromJson(str,JsonObject.class);
+    public static String toString(ItemStack stack, Gson compiler){
+        return compiler.toJson(toJsonObject(stack));
+    }
+
+    public static ItemStack fromJsonObject(JsonObject base){
         Integer id  = base.get("id").getAsInt();
         Integer amt = base.get("amount").getAsInt();
         Short damage = ((Integer) base.get("damage").getAsInt()).shortValue();
@@ -221,6 +224,10 @@ public class ItemStackUtils {
             stack.setItemMeta(meta);
         }
         return stack;
+    }
+    
+    public static ItemStack toStack(String str, Gson compiler){
+        return fromJsonObject(compiler.fromJson(str,JsonObject.class));
     }
 
     public static List<ItemStack> splitStack(ItemStack model, int size){
