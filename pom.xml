@@ -20,14 +20,6 @@
             <url>https://r.ibj.io/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>http://projectlombok.org/mavenrepo</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -58,7 +50,7 @@
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>Essentials</artifactId>
-            <version>2.13-SNAPSHOT</version>
+            <version>2.13.1</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
