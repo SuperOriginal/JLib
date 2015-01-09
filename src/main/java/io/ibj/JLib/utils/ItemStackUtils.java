@@ -181,13 +181,16 @@ public class ItemStackUtils {
         stack.setAmount(amt);
         stack.setData(new MaterialData(id,data));
         stack.setDurability(damage);
-        JsonArray enchants = base.get("enchantments").getAsJsonArray();
-        if(enchants != null){
-            for(int i = 0; i<enchants.size(); i++){
-                JsonObject ench = enchants.get(i).getAsJsonObject();
-                stack.addUnsafeEnchantment(Enchantment.getByName(ench.get("name").getAsString()), ench.get("level").getAsInt());
+        if(base.has("enchantments")) {
+            JsonArray enchants = base.get("enchantments").getAsJsonArray();
+            if (enchants != null) {
+                for (int i = 0; i < enchants.size(); i++) {
+                    JsonObject ench = enchants.get(i).getAsJsonObject();
+                    stack.addUnsafeEnchantment(Enchantment.getByName(ench.get("name").getAsString()), ench.get("level").getAsInt());
+                }
             }
         }
+
         JsonElement d = base.get("displayname");
         if(d != null){
             stack.getItemMeta().setDisplayName(d.getAsString());
@@ -204,8 +207,8 @@ public class ItemStackUtils {
         if(id == 403) { //Enchanted Book
 
             EnchantmentStorageMeta bookmeta = (EnchantmentStorageMeta) stack.getItemMeta();
-            JsonArray enchants2 = base.get("storedEnchantments").getAsJsonArray();
-            if(enchants != null){
+            JsonArray enchants2 = base.getAsJsonArray("storedEnchantments");
+            if(enchants2 != null){
                 for(int i = 0; i<enchants2.size(); i++){
                     JsonObject ench = enchants2.get(i).getAsJsonObject();
                     stack.addUnsafeEnchantment(Enchantment.getByName(ench.get("name").getAsString()), ench.get("level").getAsInt());
