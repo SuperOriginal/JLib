@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.ibj.JLib.JLib;
 import io.ibj.JLib.chat.FancyMessage;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * Created by joe on 12/6/14.
  */
+@ToString
 public class Format implements Cloneable {
 
     public Format(String... msg){
@@ -203,7 +205,7 @@ public class Format implements Cloneable {
                 total.addAll(part.flatten(new ChatPart()));
             }
             FancyMessage message = new FancyMessage("");
-            for (ChatPart chatPart : part.flatten(new ChatPart())) {
+            for (ChatPart chatPart : total) {
                 chatPart.appendToFancyMessage(message);
             }
             ret.add(message);

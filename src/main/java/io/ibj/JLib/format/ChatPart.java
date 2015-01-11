@@ -1,11 +1,13 @@
 package io.ibj.JLib.format;
 
 import io.ibj.JLib.chat.FancyMessage;
+import lombok.ToString;
 import org.bukkit.ChatColor;
 
 /**
  * Created by joe on 12/30/2014.
  */
+@ToString
 public class ChatPart implements ChatActionable, Cloneable
 {
     String text;

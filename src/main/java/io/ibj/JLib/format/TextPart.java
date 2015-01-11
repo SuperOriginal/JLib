@@ -1,6 +1,7 @@
 package io.ibj.JLib.format;
 
 import io.ibj.JLib.utils.Colors;
+import lombok.ToString;
 import org.bukkit.ChatColor;
 
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * Created by joe on 12/30/2014.
  */
+@ToString
 public class TextPart implements MPart {
 
     public TextPart(String text){
