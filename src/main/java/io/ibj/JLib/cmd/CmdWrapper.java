@@ -32,7 +32,7 @@ public class  CmdWrapper<T extends ICmd> {
     private String permError;
 
     @Getter @Setter
-    private boolean forcePlayer;
+    private Executor[] executors;
 
     @Getter
     private String root;
@@ -49,12 +49,12 @@ public class  CmdWrapper<T extends ICmd> {
     @Getter
     private boolean isAggresive;
 
-    protected CmdWrapper(T cmd, ArgsCondition condition, PermCondition perms, String permError, boolean forcePlayer, String root, String[] aliases, String description, String usage, boolean aggresive){
+    protected CmdWrapper(T cmd, ArgsCondition condition, PermCondition perms, String permError, Executor[] executors, String root, String[] aliases, String description, String usage, boolean aggresive){
         this.cmd = cmd;
         this.argsCondition = condition;
         this.permCondition = perms;
         this.permError = permError;
-        this.forcePlayer = forcePlayer;
+        this.executors = executors;
         this.root = root;
         this.aliases = aliases;
         this.description = description;
@@ -63,6 +63,48 @@ public class  CmdWrapper<T extends ICmd> {
     }
 
     public static <A extends ICmd> CmdWrapper<A> wrap(Class<A> cmd){
+        if(!cmd.isAnnotationPresent(Cmd.class)){
+            return wrapLegacy(cmd);
+        }
+        
+        final Cmd cmdAnotation = cmd.getAnnotation(Cmd.class);
+        
+        Constructor<A> constructor;
+
+        try {
+            constructor = cmd.getConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("The passed ICmd does not have an empty constructor to generate a new ICmd instance from!",e);
+        }
+
+        A cmdInst;
+        try {
+            cmdInst = constructor.newInstance();
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Passed ICmd's constructor is not public.");
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        }
+        return new CmdWrapper<>(cmdInst, new ArgsCondition() {
+            int min = cmdAnotation.min();
+            int max = cmdAnotation.max();
+            @Override
+            public boolean accepted(int argscount) {
+                return min <= argscount || max >= argscount;
+            }
+        },cmdAnotation.perm() == "" ? new NoPermCondition() : new SimplePermCondition(cmdAnotation.perm()),
+                cmdAnotation.permError(),
+                cmdAnotation.executors(),
+                cmdAnotation.name(),
+                cmdAnotation.aliases(),
+                cmdAnotation.description(),
+                cmdAnotation.usage(),
+                cmdAnotation.aggressive());
+    }
+    
+    public static <A extends ICmd> CmdWrapper<A> wrapLegacy(Class<A> cmd){
 
         ArgsCondition condition;
         if(cmd.isAnnotationPresent(ArgsEquals.class)){
@@ -94,8 +136,15 @@ public class  CmdWrapper<T extends ICmd> {
             permError = cmd.getAnnotation(PermError.class).value();
         }
 
-        boolean forcePlayer = cmd.isAnnotationPresent(ForcePlayer.class);
-
+        Executor[] executors;
+        if(cmd.isAnnotationPresent(ForcePlayer.class))
+        {
+            executors = new Executor[]{Executor.PLAYER};
+        }
+        else{
+            executors = new Executor[]{Executor.COMMAND_BLOCK, Executor.CONSOLE,Executor.PLAYER};
+        }
+        
         String[] aliases;
         if(cmd.isAnnotationPresent(Aliases.class)){
             aliases = cmd.getAnnotation(Aliases.class).value();
@@ -120,7 +169,7 @@ public class  CmdWrapper<T extends ICmd> {
             }
         }
 
-        Constructor<? extends ICmd> constructor;
+        Constructor<A> constructor;
 
         try {
              constructor = cmd.getConstructor();
@@ -128,7 +177,7 @@ public class  CmdWrapper<T extends ICmd> {
             throw new IllegalArgumentException("The passed ICmd does not have an empty constructor to generate a new ICmd instance from!",e);
         }
 
-        ICmd cmdInst;
+        A cmdInst;
         try {
             cmdInst = constructor.newInstance();
         } catch (InstantiationException e) {
@@ -151,7 +200,7 @@ public class  CmdWrapper<T extends ICmd> {
 
         boolean aggressive = cmd.isAnnotationPresent(Aggressive.class);
 
-        return new CmdWrapper(cmdInst,condition,perm,permError,forcePlayer,root,aliases, description,usage,aggressive);
+        return (CmdWrapper<A>) new CmdWrapper(cmdInst,condition,perm,permError,executors,root,aliases, description,usage,aggressive);
     }
 
     public boolean hasPerms(Permissible test){
@@ -183,6 +232,4 @@ public class  CmdWrapper<T extends ICmd> {
         }
         return s;
     }
-
-
 }

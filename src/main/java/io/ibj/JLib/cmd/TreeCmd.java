@@ -3,8 +3,12 @@ package io.ibj.JLib.cmd;
 import io.ibj.JLib.cmd.args.ArgMapNotFoundException;
 import io.ibj.JLib.exceptions.PlayerException;
 import org.bukkit.ChatColor;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.CommandMinecart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,9 +52,38 @@ public abstract class TreeCmd implements ICmd,IHelpable{
             throw new NoPermsException(selected.getPermError());
         }
 
-        if(selected.isForcePlayer() && !(sender instanceof Player))
-        {
-            throw new NonPlayerExecuteException();
+        boolean satisfiesExecutor = false;
+        for(Executor executor : selected.getExecutors()){
+            switch (executor){
+                case PLAYER:
+                    if(sender instanceof Player){
+                        satisfiesExecutor = true;
+                    }
+                    break;
+                case CONSOLE:
+                    if(sender instanceof ConsoleCommandSender){
+                        satisfiesExecutor = true;
+                    }
+                    break;
+                case COMMAND_BLOCK:
+                    if(sender instanceof BlockCommandSender){
+                        satisfiesExecutor = true;
+                    }
+                    break;
+                case MINECART:
+                    if(sender instanceof CommandMinecart){
+                        satisfiesExecutor = true;
+                    }
+                    break;
+                case REMOTE_CONSOLE:
+                    if(sender instanceof RemoteConsoleCommandSender){
+                        satisfiesExecutor = true;
+                    }
+                    break;
+            }
+        }
+        if(!satisfiesExecutor){
+            throw new CommandException("You may not run this command! You are not the correct type of command executor.");
         }
 
         args.stripArg();
@@ -78,7 +111,37 @@ public abstract class TreeCmd implements ICmd,IHelpable{
 
         for (CmdWrapper cmdWrapper : helpList) {
             if(cmdWrapper.hasPerms(sender)){
-                if(sender instanceof Player || !cmdWrapper.isForcePlayer()) {
+                boolean satisfiesExecutor = false;
+                for(Executor executor : cmdWrapper.getExecutors()){
+                    switch (executor){
+                        case PLAYER:
+                            if(sender instanceof Player){
+                                satisfiesExecutor = true;
+                            }
+                            break;
+                        case CONSOLE:
+                            if(sender instanceof ConsoleCommandSender){
+                                satisfiesExecutor = true;
+                            }
+                            break;
+                        case COMMAND_BLOCK:
+                            if(sender instanceof BlockCommandSender){
+                                satisfiesExecutor = true;
+                            }
+                            break;
+                        case MINECART:
+                            if(sender instanceof CommandMinecart){
+                                satisfiesExecutor = true;
+                            }
+                            break;
+                        case REMOTE_CONSOLE:
+                            if(sender instanceof RemoteConsoleCommandSender){
+                                satisfiesExecutor = true;
+                            }
+                            break;
+                    }
+                }
+                if(satisfiesExecutor){
                     cmdList.add(cmdWrapper);
                 }
             }

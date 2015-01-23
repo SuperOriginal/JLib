@@ -419,7 +419,6 @@ public abstract class JPlug extends JavaPlugin {
         }
         f = f.clone();
         f.setTag(formatMap.get("prefix"));
-        System.out.println("Prefix: "+formatMap.get("prefix"));
         f.setTagStyle(TagStyle.FIRST_LINE);
         return f;
     }

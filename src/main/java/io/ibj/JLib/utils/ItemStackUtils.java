@@ -190,10 +190,20 @@ public class ItemStackUtils {
                 }
             }
         }
-
+        if(id == 397 && base.has("skull_owner")){
+            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
+            meta.setOwner(base.get("skull_owner").getAsString());
+            stack.setItemMeta(meta);
+        }
+        if(base.has("color")){
+            LeatherArmorMeta meta = (LeatherArmorMeta) Bukkit.getItemFactory().getItemMeta(Material.getMaterial(id));
+            meta.setColor(Color.fromRGB(base.get("color").getAsInt()));
+            stack.setItemMeta(meta);
+        }
+        ItemMetaFactory factory = ItemMetaFactory.create(stack);
         JsonElement d = base.get("displayname");
         if(d != null){
-            stack.getItemMeta().setDisplayName(d.getAsString());
+            factory.setDisplayName(d.getAsString());
         }
         d = base.get("lore");
         if (d != null) {
@@ -202,8 +212,9 @@ public class ItemStackUtils {
             for(int i = 0; i<r.size(); i++){
                 lore.add(r.get(i).getAsString());
             }
-            stack.getItemMeta().setLore(lore);
+            factory.setLore(lore);
         }
+        factory.set();
         if(id == 403) { //Enchanted Book
 
             EnchantmentStorageMeta bookmeta = (EnchantmentStorageMeta) stack.getItemMeta();
@@ -216,16 +227,7 @@ public class ItemStackUtils {
             }
             stack.setItemMeta(bookmeta);
         }
-        if(id == 397 && base.has("skull_owner")){
-            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
-            meta.setOwner(base.get("skull_owner").getAsString());
-            stack.setItemMeta(meta);
-        }
-        if(base.has("color")){
-            LeatherArmorMeta meta = (LeatherArmorMeta) Bukkit.getItemFactory().getItemMeta(Material.getMaterial(id));
-            meta.setColor(Color.fromRGB(base.get("color").getAsInt()));
-            stack.setItemMeta(meta);
-        }
+
         return stack;
     }
     

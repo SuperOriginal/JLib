@@ -14,7 +14,7 @@ public class PlayerException extends RuntimeException {
         f = new Format(errorFormat,message);
     }
     
-    private static final Format errorFormat = new Format("&4[Error] &c");
+    private static final Format errorFormat = new Format(ChatColor.COLOR_CHAR+"4\\["+ChatColor.COLOR_CHAR+"cError"+ChatColor.COLOR_CHAR+"4\\] "+ChatColor.COLOR_CHAR+"c");
     
     public PlayerException(Format f){
         f.setTag(errorFormat);
@@ -24,11 +24,6 @@ public class PlayerException extends RuntimeException {
     Format f;
 
     public void throwToPlayer(CommandSender s){
-        if(f == null)
-            s.sendMessage(ChatColor.DARK_RED+"[Error] "+ChatColor.RED+getMessage());
-        else
-        {
-            f.sendTo(s);
-        }
+        f.sendTo(s);
     }
 }

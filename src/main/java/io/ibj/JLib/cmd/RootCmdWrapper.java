@@ -3,9 +3,9 @@ package io.ibj.JLib.cmd;
 import io.ibj.JLib.JPlug;
 import io.ibj.JLib.exceptions.PlayerException;
 import lombok.Getter;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.CommandMinecart;
 
 /**
  * Created by Joe on 5/25/2014.
@@ -32,7 +32,6 @@ public class RootCmdWrapper extends Command{
         ArgsSet args = new ArgsSet(strings);
 
         try {
-
             if (!wrapper.hasPerms(sender)) {
                 throw new NoPermsException(wrapper.getPermError());
             }
@@ -42,10 +41,39 @@ public class RootCmdWrapper extends Command{
                 return true;
             }
 
-            if (!(sender instanceof Player) && wrapper.isForcePlayer()){
-                throw new NonPlayerExecuteException();
+            boolean satisfiesExecutor = false;
+            for(Executor executor : wrapper.getExecutors()){
+                switch (executor){
+                    case PLAYER:
+                        if(sender instanceof Player){
+                            satisfiesExecutor = true;
+                        }
+                        break;
+                    case CONSOLE:
+                        if(sender instanceof ConsoleCommandSender){
+                            satisfiesExecutor = true;
+                        }
+                        break;
+                    case COMMAND_BLOCK:
+                        if(sender instanceof BlockCommandSender){
+                            satisfiesExecutor = true;
+                        }
+                        break;
+                    case MINECART:
+                        if(sender instanceof CommandMinecart){
+                            satisfiesExecutor = true;
+                        }
+                        break;
+                    case REMOTE_CONSOLE:
+                        if(sender instanceof RemoteConsoleCommandSender){
+                            satisfiesExecutor = true;
+                        }
+                        break;
+                }
             }
-
+            if(!satisfiesExecutor){
+                throw new CommandException("You may not run this command! You are not the correct type of command executor.");
+            }
             if (!wrapper.execute(sender, args)) {
                 wrapper.help(sender);
                 return true;
