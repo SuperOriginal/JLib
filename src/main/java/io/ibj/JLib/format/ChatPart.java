@@ -13,10 +13,10 @@ public class ChatPart implements ChatActionable, Cloneable
     String text;
     String clickAction;
     String clickValue;
-    String[] hover;
+    String[] hover = null;
     String insert;
     ChatColor color;
-    ChatColor[] formatting;
+    ChatColor[] formatting = new ChatColor[0];
 
     public String getText(){
         return text;
@@ -99,7 +99,7 @@ public class ChatPart implements ChatActionable, Cloneable
         }
         else
         {
-            part.formatting = null;
+            part.formatting = new ChatColor[0];
         }
         return part;
     }

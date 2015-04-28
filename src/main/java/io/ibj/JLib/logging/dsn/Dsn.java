@@ -198,7 +198,7 @@ public class Dsn {
             missingElements.add("project ID");
 
         if (!missingElements.isEmpty())
-            throw new InvalidDsnException("Invalid DSN, the following properties aren't set '" + missingElements + "'");
+            throw new InvalidDsnException("Invalid DSN, the following properties aren't object '" + missingElements + "'");
     }
 
     public String getSecretKey() {

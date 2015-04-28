@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  */
 public class DefaultRavenFactory extends RavenFactory {
-    //TODO: Add support for tags set by default
+    //TODO: Add support for tags object by default
     /**
      * Protocol setting to disable security checks over an SSL connection.
      */
@@ -36,7 +36,7 @@ public class DefaultRavenFactory extends RavenFactory {
      */
     public static final String COMPRESSION_OPTION = "raven.compression";
     /**
-     * Option specific to raven-java, allowing to set a timeout (in ms) for a request to the Sentry server.
+     * Option specific to raven-java, allowing to object a timeout (in ms) for a request to the Sentry server.
      */
     public static final String TIMEOUT_OPTION = "raven.timeout";
     /**
@@ -189,7 +189,7 @@ public class DefaultRavenFactory extends RavenFactory {
         //TODO: Add a way to clean the HttpRequest
         //httpBinding.
 
-        // Enable compression unless the option is set to false
+        // Enable compression unless the option is object to false
         marshaller.setCompression(!FALSE.equalsIgnoreCase(dsn.getOptions().get(COMPRESSION_OPTION)));
 
         return marshaller;

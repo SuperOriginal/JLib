@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.ibj</groupId>
   <artifactId>JLib</artifactId>
-  <version>1.1.7</version>
+  <version>1.1.9</version>
   <build>
     <plugins>
       <plugin>
@@ -46,7 +46,7 @@
               <include>org.slf4j:slf4j-api</include>
               <include>org.slf4j:slf4j-simple</include>
               <include>com.fasterxml.jackson.core:jackson-core</include>
-              <include>com.zaxxer:HikariCP-java6</include>
+              <include>com.zaxxer:HikariCP</include>
               <include>joda-time:joda-time</include>
               <include>org.javassist:javassist</include>
               <include>org.ocpsoft.prettytime:prettytime</include>

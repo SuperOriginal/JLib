@@ -111,7 +111,7 @@ public class HttpConnection extends AbstractConnection {
             connection.setRequestProperty(SENTRY_AUTH, getAuthHeader());
             return connection;
         } catch (IOException e) {
-            throw new IllegalStateException("Couldn't set up a connection to the sentry server.", e);
+            throw new IllegalStateException("Couldn't object up a connection to the sentry server.", e);
         }
     }
 

@@ -1,11 +1,14 @@
 package io.ibj.JLib.format;
 
+import lombok.ToString;
+
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by joe on 12/30/2014.
  */
+@ToString
 public class MSection implements MPart{
 
     public MSection(){
@@ -43,23 +46,25 @@ public class MSection implements MPart{
     @Override
     public List<ChatPart> flatten(ChatPart prime) {
         List<ChatPart> ret = new LinkedList<ChatPart>();
-        if(clickAction != null)
-            prime.clickAction = clickAction;
-        if(clickValue != null)
-            prime.clickValue = clickValue;
-        if(hover != null)
-            prime.hover = hover;
-        if(insert != null)
-            prime.insert = insert;
-        
         ChatPart localizeChatPart = prime.clone();
 
+        if(clickAction != null)
+            localizeChatPart.clickAction = clickAction;
+        if(clickValue != null)
+            localizeChatPart.clickValue = clickValue;
+        if(hover != null)
+            localizeChatPart.hover = hover;
+        if(insert != null)
+            localizeChatPart.insert = insert;
+
         for(MPart part : subParts){
-            List<ChatPart> flatten = part.flatten(prime);
+            List<ChatPart> flatten = part.flatten(localizeChatPart);
             ret.addAll(flatten);
-            localizeChatPart.color = prime.color;
-            localizeChatPart.formatting = prime.formatting;
-            prime = localizeChatPart.clone();
+            if(ret.size()>0) {
+                ChatPart lastPart = ret.get(ret.size() - 1);
+                localizeChatPart.color = lastPart.color;
+                localizeChatPart.formatting = lastPart.formatting;
+            }
         }
         return ret;
     }

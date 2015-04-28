@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class ArgSetFieldNotFoundException extends ArgSetNotFoundException {
     public ArgSetFieldNotFoundException(Arg arg, Set<? extends Object> s, Field query) {
-        super(arg, s, "No objects of the set matched the argument.");
+        super(arg, s, "No objects of the object matched the argument.");
         this.query = query;
     }
 

@@ -178,7 +178,7 @@ public class Format implements Cloneable {
         }
         return this;
     }
-    
+
     public Format sendTo(UUID... players){
         Set<CommandSender> senders = new HashSet<>();
         for(UUID id : players){
@@ -190,8 +190,9 @@ public class Format implements Cloneable {
         sendTo(senders.toArray(new CommandSender[senders.size()]));
         return this;
     }
-    
+
     public List<FancyMessage> constructFancyMessage(){
+        replace("<arrow1>","»");
         List<FancyMessage> ret = new ArrayList<>(messages.size());
         boolean sentFirst = false;
         for(MPart part : messages) {
@@ -213,7 +214,7 @@ public class Format implements Cloneable {
         }
         return ret;
     }
-    
+
     public List<MPart> getInternalMPart(){
         return ImmutableList.copyOf(messages);
     }

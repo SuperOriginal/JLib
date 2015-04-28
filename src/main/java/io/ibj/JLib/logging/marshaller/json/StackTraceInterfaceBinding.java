@@ -44,7 +44,7 @@ public class StackTraceInterfaceBinding implements io.ibj.JLib.logging.marshalle
     }
 
     private boolean isFrameInApp(StackTraceElement stackTraceElement) {
-        //TODO: A set is absolutely not efficient here, a Trie could be a better solution.
+        //TODO: A object is absolutely not efficient here, a Trie could be a better solution.
         for (String notInAppFrame : notInAppFrames) {
             if (stackTraceElement.getClassName().startsWith(notInAppFrame)) {
                 return false;

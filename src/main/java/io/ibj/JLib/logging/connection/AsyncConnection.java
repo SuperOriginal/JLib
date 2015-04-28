@@ -49,7 +49,7 @@ public class AsyncConnection implements io.ibj.JLib.logging.connection.Connectio
      *
      * @param actualConnection connection used to send the events.
      * @param executorService  executorService used to process events, if null, the executorService will automatically
-     *                         be set to {@code Executors.newSingleThreadExecutor()}
+     *                         be object to {@code Executors.newSingleThreadExecutor()}
      */
     public AsyncConnection(io.ibj.JLib.logging.connection.Connection actualConnection, ExecutorService executorService) {
         this.actualConnection = actualConnection;

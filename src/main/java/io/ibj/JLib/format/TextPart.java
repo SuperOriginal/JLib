@@ -17,11 +17,11 @@ public class TextPart implements MPart {
         this.text = text;
     }
 
-    String text;
-    String clickAction;
-    String clickValue;
-    String[] hover;
-    String insert;
+    String text = null;
+    String clickAction = null;
+    String clickValue = null;
+    String[] hover = null;
+    String insert = null;
 
 
     @Override
@@ -91,72 +91,63 @@ public class TextPart implements MPart {
                 hover[i] = Colors.colorify(hover[i]);
             }
         }
-        ChatPart currentPart = null;
-        List<ChatPart> ret = new LinkedList<ChatPart>();
+        ChatPart currentPart = new ChatPart();
+        currentPart.color = currentColor;
+        currentPart.formatting = currentFormats;
+        currentPart.clickAction = clickAction;
+        currentPart.clickValue = clickValue;
+        currentPart.insert = insert;
+        currentPart.hover = hover;
+        currentBuilder = new StringBuilder();
+        List<ChatPart> ret = new LinkedList<>();
         while(pointer < chars.length){
-            if(currentPart == null){
-                currentPart = new ChatPart();
-                currentPart.color = currentColor;
-                currentPart.formatting = currentFormats;
-                currentPart.clickAction = clickAction;
-                currentPart.clickValue = clickValue;
-                currentPart.insert = insert;
-                currentPart.hover = hover;
-                currentBuilder = new StringBuilder();
-            }
 
-            if(chars[pointer] == ChatColor.COLOR_CHAR){
-                if(pointer+1 < chars.length) { //Got another char to read a colorcode from
-                    ChatColor chatColor = ChatColor.getByChar(chars[pointer+1]);
-                    if(chatColor != null){
-                        boolean split = false;
-                        //Clip off current chatpart, append to list, start a new
-                        if(chatColor == ChatColor.RESET){
+            if ((chars[pointer] == '§') &&
+                    (pointer + 1 < chars.length))
+            {
+                ChatColor chatColor = ChatColor.getByChar(chars[pointer+1]);
+                if(chatColor != null) {
+                    boolean split = false;
+                    if (chatColor == ChatColor.RESET) {
+                        currentFormats = new ChatColor[0];
+                        currentColor = null;
+                        split = true;
+                    } else if (chatColor.isColor()) {
+                        if (currentColor != chatColor) {
+                            currentColor = chatColor;
                             currentFormats = new ChatColor[0];
-                            currentColor = null;
                             split = true;
+                        } else if ((currentFormats != null) && (currentFormats.length != 0)) {
+                            split = true;
+                            currentFormats = new ChatColor[0];
                         }
-                        else if(chatColor.isColor()){
-                            if(currentColor != chatColor) {
-                                currentColor = chatColor;
-                                currentFormats = new ChatColor[0];
-                                split = true;
-                            }
-                            else
-                            {
-                                if(currentFormats != null && currentFormats.length != 0){
-                                    split = true;
-                                    currentFormats = new ChatColor[0];
-                                }
-                            }
+                    } else if (!arrayContains(currentFormats, chatColor)) {
+                        split = true;
+                        ChatColor[] temp = new ChatColor[currentFormats.length + 1];
+                        System.arraycopy(currentFormats, 0, temp, 0, currentFormats.length);
+                        temp[(temp.length - 1)] = chatColor;
+                        currentFormats = temp;
+                    }
+                    if (split) {
+                        if (currentBuilder.length() == 0) {
+                            currentPart.color = currentColor;
+                            currentPart.formatting = currentFormats;
+                        } else {
+                            currentPart.text = currentBuilder.toString();
+                            ret.add(currentPart);
+                            currentPart = new ChatPart();
+                            currentPart.color = currentColor;
+                            currentPart.formatting = currentFormats;
+                            currentPart.clickAction = clickAction;
+                            currentPart.clickValue = clickValue;
+                            currentPart.insert = insert;
+                            currentPart.hover = hover;
+                            currentBuilder = new StringBuilder();
                         }
-                        else
-                        {
-                            if(!arrayContains(currentFormats, chatColor)){
-                                split = true;
-                                ChatColor[] temp = new ChatColor[currentFormats.length+1];
-                                System.arraycopy(currentFormats,0,temp,0, currentFormats.length);
-                                temp[temp.length-1] = chatColor;
-                                currentFormats = temp;
-                            }
-                        }
-                        if(split){
-                            if(currentBuilder.length()==0){
-                                currentPart.color = currentColor;
-                                currentPart.formatting = currentFormats;
-                            }
-                            else {
-                                //Ok, gotta split this thing
-                                currentPart.text = currentBuilder.toString();
-                                ret.add(currentPart);
-                                currentPart = null;
-                            }
-                        }
-
-                        pointer +=2; //Skip the next on pointer too, covered by identifier char. Continue.
-                        continue;
                     }
                 }
+                pointer += 2;
+                continue;
             }
             currentBuilder.append(chars[pointer]);
             pointer++;

@@ -21,7 +21,7 @@ import java.util.List;
  * This way, Sentry will be able to put the two events in the same category.
  * </p>
  * <p>
- * Note: Sentry won't attempt to format the message, this is why the formatted message should be set through
+ * Note: Sentry won't attempt to format the message, this is why the formatted message should be object through
  * {@link io.ibj.JLib.logging.event.EventBuilder#setMessage(String)} in any case.
  * </p>
  */

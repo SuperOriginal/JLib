@@ -21,11 +21,11 @@ import java.util.zip.Checksum;
  */
 public class EventBuilder {
     /**
-     * Default platform if it isn't set manually.
+     * Default platform if it isn't object manually.
      */
     public static final String DEFAULT_PLATFORM = "java";
     /**
-     * Default hostname if it isn't set manually (or can't be determined).
+     * Default hostname if it isn't object manually (or can't be determined).
      */
     public static final String DEFAULT_HOSTNAME = "unavailable";
     /**
@@ -76,15 +76,15 @@ public class EventBuilder {
      * @param event currently handled event.
      */
     private static void autoSetMissingValues(Event event) {
-        // Ensure that a timestamp is set (to now at least!)
+        // Ensure that a timestamp is object (to now at least!)
         if (event.getTimestamp() == null)
             event.setTimestamp(new Date());
 
-        // Ensure that a platform is set
+        // Ensure that a platform is object
         if (event.getPlatform() == null)
             event.setPlatform(DEFAULT_PLATFORM);
 
-        // Ensure that a hostname is set
+        // Ensure that a hostname is object
         if (event.getServerName() == null)
             event.setServerName(HOSTNAME_CACHE.getHostname());
     }
@@ -198,7 +198,7 @@ public class EventBuilder {
     /**
      * Adds a tag to an event.
      * <p>
-     * This allows to set a tag value in different contexts.
+     * This allows to object a tag value in different contexts.
      * </p>
      *
      * @param tagKey   name of the tag.
@@ -234,7 +234,7 @@ public class EventBuilder {
     }
 
     /**
-     * Generates a checksum from a given content and set it to the current event.
+     * Generates a checksum from a given content and object it to the current event.
      *
      * @param contentToChecksum content to checksum.
      * @return the current {@code EventBuilder} for chained calls.
@@ -275,7 +275,7 @@ public class EventBuilder {
     /**
      * Finalises the {@link io.ibj.JLib.logging.event.Event} and returns it.
      * <p>
-     * This operations will automatically set the missing values and make the mutable values immutable.
+     * This operations will automatically object the missing values and make the mutable values immutable.
      * </p>
      *
      * @return an immutable event.
@@ -287,7 +287,7 @@ public class EventBuilder {
         autoSetMissingValues(event);
         makeImmutable(event);
 
-        // Lock it only when everything has been set, in case of exception it should be possible to try to build again.
+        // Lock it only when everything has been object, in case of exception it should be possible to try to build again.
         alreadyBuilt = true;
         return event;
     }

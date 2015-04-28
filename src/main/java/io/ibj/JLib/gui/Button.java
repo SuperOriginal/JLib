@@ -16,7 +16,7 @@ import java.util.Observable;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper =  false)
-public final class Button extends Observable{
+public final class Button extends Observable implements Cloneable{
 
     private ItemStack icon;
     private ClickHandler handler;
@@ -36,4 +36,8 @@ public final class Button extends Observable{
         notifyObservers();
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new Button(icon != null ? icon.clone() : null,handler);
+    }
 }

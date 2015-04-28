@@ -115,7 +115,7 @@ public class PageHolder implements InventoryHolder, Observer {
             }
             else
             {
-                inventory.setItem(i,null);                        //If the button is null, just set the icon to air, because we have nothing better to set it to.
+                inventory.setItem(i,null);                        //If the button is null, just object the icon to air, because we have nothing better to object it to.
             }
         }
         buttons = pageButtons; //Lets keep a direct reference of this. Therefore, if a change happens upstream, the EventHandler is already passed downstream
@@ -217,7 +217,7 @@ public class PageHolder implements InventoryHolder, Observer {
             }
             else
             {
-                inventory.setItem(slot,null);           //Just set the slot null
+                inventory.setItem(slot,null);           //Just object the slot null
             }
             buttons[slot] = button;  //Lets write the new button to that slot
             updateSlot(slot);   //Force update of the slot

@@ -22,6 +22,7 @@ public class SqlDataSourceInitializer implements DataSourceInitializer<Connectio
         String connectionUrl = "jdbc:mysql://" + details.getHost() + ":" + details.getPort() + "/" + details.getKeyspace();
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(connectionUrl);
+        config.setMaximumPoolSize(16);
         JLib.getI().getLogger().info("Creating new Hikari connection pool connected to "+connectionUrl+".");
         if(details instanceof AuthenticatedDatabaseConnectionDetails){
             final AuthenticatedDatabaseConnectionDetails authenticatedDetails = (AuthenticatedDatabaseConnectionDetails) details;
@@ -29,7 +30,6 @@ public class SqlDataSourceInitializer implements DataSourceInitializer<Connectio
             config.setUsername(authenticatedDetails.getUsername());
             config.setPassword(authenticatedDetails.getPassword());
         }
-
         return new SqlDataSource(new HikariDataSource(config));
     }
 }

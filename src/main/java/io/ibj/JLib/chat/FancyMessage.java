@@ -29,7 +29,7 @@ import java.util.logging.Level;
  * This class allows plugins to emulate the functionality of the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Commands#tellraw">tellraw command</a>.
  * <p>
  * This class follows the builder pattern, allowing for method chaining.
- * It is set up such that invocations of property-setting methods will affect the current editing component,
+ * It is object up such that invocations of property-setting methods will affect the current editing component,
  * and a call to {@link #then()} or {@link #(Object)} will append a new editing component to the end of the message,
  * optionally initializing it with text. Further property-setting method calls will affect that editing component.
  * </p>
@@ -95,12 +95,12 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * Sets the text of the current editing component to a value.
 	 * @param text The new text of the current editing component.
 	 * @return This builder instance.
-	 * @exception IllegalStateException If the text for the current editing component has already been set.
+	 * @exception IllegalStateException If the text for the current editing component has already been object.
 	 */
 	public FancyMessage text(String text) {
 		MessagePart latest = latest();
 		if (latest.hasText()) {
-			throw new IllegalStateException("text for this message part is already set");
+			throw new IllegalStateException("text for this message part is already object");
 		}
 		latest.text = TextualComponent.rawText(text);
 		dirty = true;
@@ -110,7 +110,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	public FancyMessage text(TextualComponent text) {
 		MessagePart latest = latest();
 		if (latest.hasText()) {
-			throw new IllegalStateException("text for this message part is already set");
+			throw new IllegalStateException("text for this message part is already object");
 		}
 		latest.text = text;
 		dirty = true;

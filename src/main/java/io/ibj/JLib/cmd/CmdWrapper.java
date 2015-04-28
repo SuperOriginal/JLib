@@ -92,7 +92,7 @@ public class  CmdWrapper<T extends ICmd> {
             int max = cmdAnotation.max();
             @Override
             public boolean accepted(int argscount) {
-                return min <= argscount || max >= argscount;
+                return min <= argscount &&  max >= argscount;
             }
         },cmdAnotation.perm() == "" ? new NoPermCondition() : new SimplePermCondition(cmdAnotation.perm()),
                 cmdAnotation.permError(),

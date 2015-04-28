@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class ArgSetMethodNotFoundException extends ArgSetNotFoundException {
     public ArgSetMethodNotFoundException(Arg arg, Set<? extends Object> s, Method m, Object... methodArgs) {
-        super(arg, s, "No objects of the set matched the argument.");
+        super(arg, s, "No objects of the object matched the argument.");
         this.m = m;
         this.args = methodArgs;
     }

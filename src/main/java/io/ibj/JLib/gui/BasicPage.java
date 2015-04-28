@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 /**
  * Created by Joe on 6/30/2014.
  */
-public class BasicPage extends Page {
+public class BasicPage extends Page implements Cloneable{
     public BasicPage(String name, Integer size) {
         super(name, size);
         buttons = new Button[size];
@@ -75,5 +75,19 @@ public class BasicPage extends Page {
     @Override
     public void onClose(PageHolder holder, PageCloseCause cause) {
         //We dont care? I dont know.
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Button[] bRet = new Button[buttons.length];
+        for(int i = 0; i<bRet.length; i++){
+            if(buttons[i] == null){
+                bRet[i] = null;
+            }
+            else {
+                bRet[i] = (Button) buttons[i].clone();
+            }
+        }
+        return new BasicPage(getName(),getSize(),bRet);
     }
 }

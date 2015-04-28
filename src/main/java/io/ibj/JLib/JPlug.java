@@ -9,10 +9,13 @@ import io.ibj.JLib.file.YAMLFile;
 import io.ibj.JLib.format.Format;
 import io.ibj.JLib.format.TagStyle;
 import io.ibj.JLib.gui.PageHolder;
+import io.ibj.JLib.logging.event.EventBuilder;
+import io.ibj.JLib.logging.event.interfaces.ExceptionInterface;
 import io.ibj.JLib.safe.SafeRunnablePlayerWrapper;
 import io.ibj.JLib.safe.SafeRunnableWrapper;
 import io.ibj.JLib.safe.SuperEventExecutor;
 import io.ibj.JLib.utils.Colors;
+import lombok.SneakyThrows;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,14 +27,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
-import org.bukkit.plugin.IllegalPluginAccessException;
-import org.bukkit.plugin.RegisteredListener;
-import org.bukkit.plugin.TimedRegisteredListener;
+import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -42,10 +48,10 @@ import java.util.concurrent.FutureTask;
  */
 public abstract class JPlug extends JavaPlugin {
 
-    YAMLFile formatsFile;
+    protected YAMLFile formatsFile;
 
     private Set<ResourceFile> resources;
-    private Set<Command> registeredCommands;
+    private Set<Command> registeredCommands = new HashSet<>();
 
     public void registerResource(ResourceFile resource){
         resources.add(resource);
@@ -309,7 +315,11 @@ public abstract class JPlug extends JavaPlugin {
     public void handleError(Exception e){
         e.printStackTrace();
         if(!JLib.getI().isDebug())
-            JLib.getI().getRaven().sendException(e);
+            JLib.getI().reportEvent(new EventBuilder().addSentryInterface(new ExceptionInterface(e))
+                    .setLevel(io.ibj.JLib.logging.event.Event.Level.ERROR)
+                    .setMessage(e.getMessage())
+                    .addTag("Source Plugin", this.getDescription().getName())
+                    .addTag("Source SHA", this.getDescription().getVersion()).build());
     }
 
     public void reportEvent(io.ibj.JLib.logging.event.Event e){
@@ -325,6 +335,13 @@ public abstract class JPlug extends JavaPlugin {
     @Override
     public final void onEnable() {
         try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    setVersion(getSHA().substring(0,8));
+                    getLogger().info("SHA-256 computed as "+getDescription().getVersion());
+                }
+            }).start();
             saveDefaultConfig();
             this.formatsFile = new YAMLFile(this, "formats.yml");
             this.formatsFile.saveDefaultConfig();
@@ -427,5 +444,38 @@ public abstract class JPlug extends JavaPlugin {
         return formatMap.containsKey(key);
     }
 
+    private static Field versionField;
+    static{
+        try {
+            versionField = PluginDescriptionFile.class.getDeclaredField("version");
+            versionField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
 
+    protected void setVersion(String version){
+        try {
+            versionField.set(getDescription(),version);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SneakyThrows
+    public String getSHA(){
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        System.out.println(getFile().getPath());
+        try (InputStream is = Files.newInputStream(Paths.get(getFile().getPath()))) {
+            DigestInputStream dis = new DigestInputStream(is, md);
+            while(dis.available() > 0){
+                dis.read();
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+        for(byte b : md.digest()){
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
 }
