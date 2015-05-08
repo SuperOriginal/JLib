@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.ibj</groupId>
   <artifactId>JLib</artifactId>
-  <version>1.1.9</version>
+  <version>1.1.10-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -66,8 +66,14 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.8-R0.1</version>
+      <version>1.8.3-R0.1-SNAPSHOT</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>minecraft-server</artifactId>
+          <groupId>org.spigotmc</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.ess3</groupId>
@@ -97,11 +103,11 @@
   <distributionManagement>
     <repository>
       <id>releases</id>
-      <url>https://r.ibj.io/content/repositories/releases/</url>
+      <url>https://ibj.io/r/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
-      <url>https://r.ibj.io/content/repositories/snapshots/</url>
+      <url>https://ibj.io/r/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
   <properties>

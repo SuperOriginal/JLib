@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter;
 
 import io.ibj.JLib.utils.ArrayWrapper;
 import io.ibj.JLib.utils.Reflection;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.Statistic.Type;
 import org.bukkit.command.CommandSender;
@@ -555,11 +556,20 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	private static Object nmsChatSerializerGsonInstance;
 	private static Method fromJsonMethod;
 
+
 	private Object createChatPacket(String json) throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		if(nmsChatSerializerGsonInstance == null){
 			// Find the field and its value, completely bypassing obfuscation
-			for(Field declaredField : Reflection.getNMSClass("ChatSerializer").getDeclaredFields()){
-				if(Modifier.isFinal(declaredField.getModifiers()) && Modifier.isStatic(declaredField.getModifiers()) && declaredField.getType().getName().endsWith("Gson")){
+			Class<?> iChatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
+            Class<?> chatSerializer = null;
+            for(Class<?> clazz : iChatBaseComponent.getDeclaredClasses()){
+                if(clazz.getName().endsWith("ChatSerializer")){
+                    chatSerializer = clazz;
+                    break;
+                }
+            }
+			for(Field declaredField : chatSerializer.getDeclaredFields()){
+                if(Modifier.isFinal(declaredField.getModifiers()) && Modifier.isStatic(declaredField.getModifiers()) && declaredField.getType().getName().endsWith("Gson")){
 					// We've found our field
 					declaredField.setAccessible(true);
 					nmsChatSerializerGsonInstance = declaredField.get(null);
