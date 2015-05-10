@@ -7,7 +7,6 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -20,7 +19,6 @@ public class SuperEventExecutor implements EventExecutor {
     private Method eventMethod;
     private JPlug fallbackError;
 
-
     @Override
     public void execute(Listener listener, Event event) throws EventException {
         try{
@@ -28,10 +26,6 @@ public class SuperEventExecutor implements EventExecutor {
                 return;
             }
             eventMethod.invoke(listener,event);
-        } catch (InvocationTargetException e) {
-            fallbackError.handleError(e);
-        } catch (IllegalAccessException e) {
-            fallbackError.handleError(e);
         } catch (Exception e){
             fallbackError.handleError(e);
         }
