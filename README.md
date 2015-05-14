@@ -1,1 +1,1 @@
-Library plugin built for PixelPrison
+Library plugin container for bukkit servers.
