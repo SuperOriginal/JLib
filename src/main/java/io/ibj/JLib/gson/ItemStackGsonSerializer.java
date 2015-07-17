@@ -2,10 +2,15 @@ package io.ibj.JLib.gson;
 
 import com.google.gson.*;
 import io.ibj.JLib.utils.ItemMetaFactory;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
 import java.lang.reflect.Type;
@@ -15,6 +20,7 @@ import java.util.Map;
 
 /**
  * Created by Joe on 10/19/2014.
+ * Edited by Super on 7/17/2015.
  */
 public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
     @Override
@@ -63,6 +69,28 @@ public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonD
             }
             stack.setItemMeta(bookmeta);
         }
+
+        if(stack.getType() == Material.BANNER){
+            BannerMeta bannerMeta = (BannerMeta) stack.getItemMeta();
+            DyeColor bcolor = DyeColor.valueOf(base.get("baseColor").getAsString());
+            bannerMeta.setBaseColor(bcolor);
+
+            JsonArray patterns = base.get("patterns").getAsJsonArray();
+            if(patterns != null){
+                for(int i = 0; i < patterns.size(); i++){
+                    JsonObject pattern = patterns.get(i).getAsJsonObject();
+                    bannerMeta.addPattern(new Pattern(DyeColor.valueOf(pattern.get("dyeColor").getAsString()), PatternType.valueOf(pattern.get("patternType").getAsString())));
+                }
+            }
+
+            stack.setItemMeta(bannerMeta);
+        }
+
+        if(stack.getType() == Material.SKULL_ITEM){
+            SkullMeta skullMeta = (SkullMeta) stack.getItemMeta();
+            skullMeta.setOwner(base.get("owner").getAsString());
+            stack.setItemMeta(skullMeta);
+        }
         return stack;
     }
 
@@ -92,7 +120,7 @@ public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonD
                 obj.add("enchantments",enchantmentList);
             }
             if(stack.hasItemMeta()){
-                obj.addProperty("displayname",stack.getItemMeta().getDisplayName());
+                obj.addProperty("displayname", stack.getItemMeta().getDisplayName());
                 if(stack.getItemMeta().hasLore()){
                     JsonArray loreArray = new JsonArray();
                     for(String s : stack.getItemMeta().getLore()){
@@ -101,6 +129,28 @@ public class ItemStackGsonSerializer implements JsonSerializer<ItemStack>, JsonD
                     obj.add("lore",loreArray);
                 }
             }
+
+            if(stack.getType() == Material.BANNER){
+                BannerMeta bmeta = (BannerMeta) stack.getItemMeta();
+                obj.addProperty("baseColor", bmeta.getBaseColor().toString());
+
+                if(!bmeta.getPatterns().isEmpty()) {
+                    JsonArray patterns = new JsonArray();
+                    for (Pattern pattern : bmeta.getPatterns()) {
+                        JsonObject p = new JsonObject();
+                        p.addProperty("dyeColor",pattern.getColor().toString());
+                        p.addProperty("patternType",pattern.getPattern().toString());
+                        patterns.add(p);
+                    }
+                    obj.add("patterns",patterns);
+                }
+            }
+
+            if(stack.getType() == Material.SKULL_ITEM){
+                SkullMeta smeta = (SkullMeta) stack.getItemMeta();
+                obj.addProperty("owner",smeta.getOwner());
+            }
+
             if(stack.getType() == Material.ENCHANTED_BOOK){
                 JsonArray storedEnchants = new JsonArray();
                 for(Map.Entry<Enchantment,Integer> ench : ((EnchantmentStorageMeta) stack.getItemMeta()).getStoredEnchants().entrySet()){
