@@ -1,5 +1,6 @@
 package io.ibj.JLib.exceptions;
 
+import io.ibj.JLib.JLib;
 import io.ibj.JLib.format.Format;
 import io.ibj.JLib.format.TagStyle;
 import org.bukkit.ChatColor;
@@ -14,7 +15,7 @@ public class PlayerException extends RuntimeException {
         f = new Format(errorFormat,message);
     }
     
-    private static final Format errorFormat = new Format(ChatColor.COLOR_CHAR+"4\\["+ChatColor.COLOR_CHAR+"cError"+ChatColor.COLOR_CHAR+"4\\] "+ChatColor.COLOR_CHAR+"c");
+    private static final Format errorFormat = new Format(JLib.getI().getF("error"));
     
     public PlayerException(Format f){
         f.setTag(errorFormat);

@@ -1,0 +1,6 @@
+#Pretty sure JPlug requires a prefix, so blank it is.
+prefix: ""
+
+#Here's the good stuff.
+error: "&4"
+help: "&cSyntax: &7"

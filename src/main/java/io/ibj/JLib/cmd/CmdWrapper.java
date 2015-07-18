@@ -1,5 +1,7 @@
 package io.ibj.JLib.cmd;
 
+import io.ibj.JLib.JLib;
+import io.ibj.JLib.JPlug;
 import io.ibj.JLib.cmd.annotations.*;
 import io.ibj.JLib.exceptions.PlayerException;
 import lombok.Getter;
@@ -221,7 +223,7 @@ public class  CmdWrapper<T extends ICmd> {
             iHelpable.help(sender);
         }
         else {
-            sender.sendMessage(ChatColor.DARK_PURPLE+"["+ChatColor.LIGHT_PURPLE+"Help"+ChatColor.DARK_PURPLE+"]"+ChatColor.LIGHT_PURPLE+ " "+getUsage());
+            sender.sendMessage(JLib.getI().getF("help") + getUsage());
         }
     }
 
